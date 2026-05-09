@@ -1,18 +1,32 @@
-# Phase 0 protein selection
-# Status: DRAFT — awaiting final approval
-# DO NOT change after first experiment run.
+# Phase 0 — Cryptic Pocket Noise Sanity Check
+# Protein selection: LOCKED. Do not change during experiment.
+# If results look wrong, change for the next experiment, not this one.
 #
 # Source: Lewis et al. 2024/2025, Science 389 eadv9817
 #         Annotations: github.com/microsoft/bioemu-benchmarks
+#         Path: bioemu_benchmarks/assets/multiconf_benchmark_0.1/crypticpocket/
 #
-# Stratification:
-#   Axis 1: ref-to-ref RMSD (apo↔holo), bins: low ≤4 Å, mid 4–8 Å, high >8 Å
-#   Axis 2: sequence length (smallest / median / largest within bin)
-#   Exclusion: pocket_residues / total_residues > 0.25 (domain motion, not pocket)
+# ── Stratification ──────────────────────────────────────────────────────────
+#   Axis 1: ref-to-ref RMSD (Cα, apo ↔ holo), bins:
+#             low  ≤ 2.5 Å
+#             mid  2.5–5.0 Å
+#             high > 5.0 Å
+#   Axis 2: sequence length — smallest / median / largest within bin
+#   + 1 wildcard (RhoA — recognizable GTPase, PocketMiner literature)
 #
-# ConforMix note: ConforMix evaluated 31 of 34 proteins (3 excluded, identities
-#   unknown — not published in their repo). Up to 3 of our 10 may overlap with
-#   their exclusion set. Documented; cannot fix without their list.
+# ── Exclusion criteria ──────────────────────────────────────────────────────
+#   pocket_residues / total_residues > 0.40 → domain motion, not localized pocket
+#   Excluded: P02787 (96%), P12823 (81%), P0DP23 (99%), P69441 (44%), P44542 (44%)
+#
+# ── Additional caveats (document for writeup) ───────────────────────────────
+#   1. Q16539 dropped: no annotation file in bioemu-benchmarks repo.
+#   2. ConforMix evaluated 31/34 proteins; 3 exclusions not named in their repo.
+#      Up to 3 of our 10 may overlap with their exclusion set. Cannot fix.
+#   3. VP35 (Q05318, Bowman 2026 benchmark) NOT in Lewis set.
+#      Direct comparability to Bowman 2026 unavailable at Spec #0 stage.
+#   4. High-RMSD bin spans only 5.14–5.29 Å. Lewis set has no localized-pocket
+#      proteins with RMSD > 5.3 Å. Stratum is narrow by dataset constraint.
+#   5. Lewis set skews easy: 19/33 proteins have RMSD ≤ 4 Å.
 
 experiment:
   name: phase0_noise_sanity
@@ -24,126 +38,199 @@ experiment:
 
 proteins:
 
-  # ── LOW RMSD BIN (≤4 Å) ─────────────────────────────────────────────────
-  # TODO: fill after user approval — 3 proteins needed from low bin
+  # ── LOW RMSD BIN (≤ 2.5 Å) ───────────────────────────────────────────────
 
-  - uniprot: PENDING_LOW_SMALL
-    name: "PENDING"
-    rmsd_bin: low
-    size_slot: small
+  - uniprot: P79345
+    name: "NPC intracellular cholesterol transporter 2"
+    short_name: "NPC2"
+    organism: "Bos taurus"
+    length: 130
+    apo_pdb: "1NEP_A"
+    holo_pdb: "2HKA_C"
+    holo_ligand: "C3S"
+    rmsd_ref_to_ref: 1.08
+    pocket_residue_ranges: [[91, 105]]
+    pocket_residues: 15
+    pocket_ratio: 0.115
+    bin: low
+    role: smallest
 
-  - uniprot: PENDING_LOW_MED
-    name: "PENDING"
-    rmsd_bin: low
-    size_slot: median
-
-  - uniprot: PENDING_LOW_LARGE
-    name: "PENDING"
-    rmsd_bin: low
-    size_slot: large
-
-  # ── MID RMSD BIN (4–8 Å) ────────────────────────────────────────────────
-
-  - uniprot: P26281
-    name: "TBD — fetch from UniProt"
-    length: 158
-    pocket_residues: 18
-    pocket_ratio: 0.114
-    rmsd_apo_holo: 4.10
-    rmsd_bin: mid
-    size_slot: small
-    notes: "confirmed; name TBD"
-
-  - uniprot: PENDING_MID_MED
-    name: "PENDING — replacement for P44542 (dropped, 44% ratio)"
-    rmsd_bin: mid
-    size_slot: median
-    notes: "candidates: P12758 (253 res, 18.6%, ~3.16 Å) or P08037 (286 res, 19.9%, ~4.86 Å)"
-
-  - uniprot: P0AG16
-    name: "TBD — fetch from UniProt"
-    length: 504
-    pocket_residues: 36
-    pocket_ratio: 0.071
-    rmsd_apo_holo: 4.73
-    rmsd_bin: mid
-    size_slot: large
-    notes: "confirmed; name TBD"
-
-  # ── HIGH RMSD BIN (>8 Å) ────────────────────────────────────────────────
-  # Note: bin edge adjusted to >5 Å based on actual data distribution
-
-  - uniprot: P9WPY3
-    name: "TBD — fetch from UniProt"
-    length: 184
-    pocket_residues: 41
-    pocket_ratio: 0.223
-    rmsd_apo_holo: 5.26
-    rmsd_bin: high
-    size_slot: small
-    notes: "confirmed; name TBD"
-
-  - uniprot: P08709
-    name: "TBD — fetch from UniProt"
-    length: 254
-    pocket_residues: 63
-    pocket_ratio: 0.248
-    rmsd_apo_holo: 5.14
-    rmsd_bin: high
-    size_slot: median
-    notes: "confirmed; name TBD; borderline ratio 24.8% — acceptable"
-
-  - uniprot: Q02763
-    name: "TBD — fetch from UniProt"
-    length: 327
-    pocket_residues: 42
-    pocket_ratio: 0.128
-    rmsd_apo_holo: 5.29
-    rmsd_bin: high
-    size_slot: large
-    notes: "confirmed; name TBD"
-
-  # ── WILDCARD ─────────────────────────────────────────────────────────────
-
-  - uniprot: PENDING_WILDCARD
-    name: "PENDING — replacement for P69441 adenylate kinase (dropped, 44% ratio)"
-    rmsd_bin: any
-    size_slot: wildcard
-    notes: |
-      VP35 (Q05318) NOT in Lewis set. Need: recognizable protein from PocketMiner
-      paper or Bowman 2026 benchmark, ratio ≤25%.
-      TEM-1 (P62593) already used. Kinase / beta-lactamase preferred.
-
-  # ── TEM-1 (named wildcard — confirmed) ───────────────────────────────────
   - uniprot: P62593
-    name: "TEM-1 beta-lactamase"
+    name: "Beta-lactamase TEM"
+    short_name: "TEM-1"
+    organism: "Escherichia coli"
     length: 263
+    apo_pdb: "1JWP_A"
+    holo_pdb: "1PZO_A"
+    holo_ligand: "CBT"
+    rmsd_ref_to_ref: null  # verify in Task A; expected ≤ 2.5 Å
+    pocket_residue_ranges: [[190, 200], [244, 263]]
     pocket_residues: 31
     pocket_ratio: 0.118
-    rmsd_apo_holo: null  # fill from bioemu-benchmarks
-    rmsd_bin: null
-    size_slot: named_wildcard
-    notes: "recognizable name; appears in PocketMiner literature"
+    bin: low
+    role: median
+    notes: "Recognizable name — appears in PocketMiner paper and Bowman benchmark literature"
 
-# ── EXCLUDED FROM POOL ───────────────────────────────────────────────────────
+  - uniprot: O74933
+    name: "UDP-N-acetylglucosamine pyrophosphorylase"
+    short_name: "UAP1"
+    organism: "Candida albicans"
+    length: 486
+    apo_pdb: "2YQC_A"
+    holo_pdb: "2YQS_A"
+    holo_ligand: "UD1"
+    rmsd_ref_to_ref: null  # verify in Task A; expected ≤ 2.5 Å
+    pocket_residue_ranges: [[105, 120], [280, 330]]
+    pocket_residues: 67
+    pocket_ratio: 0.138
+    bin: low
+    role: largest
+
+  # ── MID RMSD BIN (2.5–5.0 Å) ─────────────────────────────────────────────
+
+  - uniprot: P26281
+    name: "2-amino-4-hydroxy-6-hydroxymethyldihydropteridine pyrophosphokinase"
+    short_name: "FolK / HPPK"
+    organism: "Escherichia coli K12"
+    length: 158
+    apo_pdb: "1HKA_A"
+    holo_pdb: "3IP0_A"
+    holo_ligand: "HHS"
+    rmsd_ref_to_ref: 4.10
+    pocket_residue_ranges: [[44, 52], [84, 92]]
+    pocket_residues: 18
+    pocket_ratio: 0.114
+    bin: mid
+    role: smallest
+
+  - uniprot: P12758
+    name: "Uridine phosphorylase"
+    short_name: "UdP / UPase"
+    organism: "Escherichia coli K12"
+    length: 253
+    apo_pdb: "1K3F_B"
+    holo_pdb: "1U1D_F"
+    holo_ligand: "181"
+    rmsd_ref_to_ref: 3.16  # approximate; verify in Task A
+    pocket_residue_ranges: [[161, 190], [224, 240]]
+    pocket_residues: 47
+    pocket_ratio: 0.186
+    bin: mid
+    role: median
+    notes: "Replacement for P44542 (dropped: pocket_ratio=0.444)"
+
+  - uniprot: P0AG16
+    name: "Amidophosphoribosyltransferase"
+    short_name: "PurF / GPAT"
+    organism: "Escherichia coli K12"
+    length: 504
+    apo_pdb: "1ECJ_D"
+    holo_pdb: "1ECC_B"
+    holo_ligand: "PCP"
+    rmsd_ref_to_ref: 4.73
+    pocket_residue_ranges: [[323, 358]]
+    pocket_residues: 36
+    pocket_ratio: 0.071
+    bin: mid
+    role: largest
+
+  # ── HIGH RMSD BIN (> 5.0 Å) ──────────────────────────────────────────────
+  # Note: bin ceiling = 5.29 Å — Lewis set has no higher localized-pocket cases.
+
+  - uniprot: P9WPY3
+    name: "Shikimate kinase"
+    short_name: "AroK"
+    organism: "Mycobacterium tuberculosis H37Rv"
+    length: 184
+    apo_pdb: "2IYT_A"
+    holo_pdb: "2IYQ_A"
+    holo_ligand: "ADP"
+    rmsd_ref_to_ref: 5.26
+    pocket_residue_ranges: [[100, 140]]
+    pocket_residues: 41
+    pocket_ratio: 0.223
+    bin: high
+    role: smallest
+    notes: "TB drug target — clinically relevant"
+
+  - uniprot: P08709
+    name: "Coagulation factor VII"
+    short_name: "Factor VII"
+    organism: "Homo sapiens"
+    length: 254
+    apo_pdb: "1JBU_A"
+    holo_pdb: "1WUN_B"
+    holo_ligand: "P5B"
+    rmsd_ref_to_ref: 5.14
+    pocket_residue_ranges: [[40, 45], [81, 90], [155, 192], [210, 218]]
+    pocket_residues: 63
+    pocket_ratio: 0.248
+    bin: high
+    role: median
+    notes: "Clinical relevance; borderline ratio 24.8% — acceptable, no domain-motion flag"
+
+  - uniprot: Q02763
+    name: "Angiopoietin-1 receptor"
+    short_name: "Tie-2"
+    organism: "Homo sapiens"
+    length: 327
+    apo_pdb: "1FVR_A"
+    holo_pdb: "2OO8_A"
+    holo_ligand: "RAJ"
+    rmsd_ref_to_ref: 5.29
+    pocket_residue_ranges: [[10, 33], [164, 181]]
+    pocket_residues: 42
+    pocket_ratio: 0.128
+    bin: high
+    role: largest
+    notes: "Kinase domain — drug target"
+
+  # ── WILDCARD ──────────────────────────────────────────────────────────────
+
+  - uniprot: P61586
+    name: "Transforming protein RhoA"
+    short_name: "RhoA"
+    organism: "Homo sapiens"
+    length: 178
+    apo_pdb: "1XCG_B"
+    holo_pdb: "1OW3_B"
+    holo_ligand: "GDP"
+    rmsd_ref_to_ref: null  # verify in Task A
+    pocket_residue_ranges: [[12, 48]]
+    pocket_residues: 37
+    pocket_ratio: 0.208
+    bin: wildcard
+    role: wildcard
+    notes: |
+      Replacement for P69441 adenylate kinase (dropped: pocket_ratio=0.444, domain motion).
+      RhoA: canonical small GTPase, well-characterized cryptic pocket, appears in
+      PocketMiner and cryptic-pocket literature. Localized switch-I/II region.
+
+# ── EXCLUDED FROM POOL (documented for writeup) ──────────────────────────────
 excluded:
   - uniprot: Q16539
-    reason: "no annotation file in bioemu-benchmarks repo"
+    reason: "No annotation file in bioemu-benchmarks repo"
 
   - uniprot: P02787
-    name: Serotransferrin
-    reason: "pocket_ratio=0.961 — whole protein annotated"
+    name: "Serotransferrin"
+    pocket_ratio: 0.961
+    reason: "Whole protein annotated as pocket — not a localized cryptic site"
 
   - uniprot: P12823
-    reason: "pocket_ratio=0.812 — whole domain annotated"
+    pocket_ratio: 0.812
+    reason: "Whole domain annotated"
 
   - uniprot: P0DP23
-    name: Calmodulin
-    reason: "pocket_ratio=0.993 — whole protein; also RMSD outlier (14.73 Å from domain reorientation)"
+    name: "Calmodulin"
+    pocket_ratio: 0.993
+    rmsd_ref_to_ref: 14.73
+    reason: "Whole protein; RMSD outlier from whole-domain reorientation, not pocket opening"
 
   - uniprot: P69441
-    name: Adenylate kinase
-    reason: "pocket_ratio=0.444 — LID/NMP domain hinge, not localized cryptic pocket"
+    name: "Adenylate kinase"
+    pocket_ratio: 0.444
+    reason: "LID/NMP domain hinge — domain motion confound, not localized cryptic pocket"
 
   - uniprot: P44542
-    reason: "pocket_ratio=0.444 — domain motion suspected"
+    pocket_ratio: 0.444
+    reason: "Domain motion suspected — same red flag as P69441"
