@@ -35,6 +35,9 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/cryptic_pocket_phd"]
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [tool.uv]
 dev-dependencies = [
     "pytest",
