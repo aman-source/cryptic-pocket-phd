@@ -1,10 +1,13 @@
 # Copied from boltz commit cb04aeccdd480fd4db707f0bbafde538397fa2ac,
-# src/boltz/model/modules/diffusion.py, DiffusionModule.sample().
+# src/boltz/model/modules/diffusion.py, AtomDiffusion.sample().
 # Modified: added `intermediate_capture_fn` callback parameter, called after
 # preconditioned_network_forward (and after any guidance/steering update) at
 # each denoising step, before the Euler update.
 # Callback is injected at the location marked "# <<< CAPTURE HOOK >>>".
 # All other logic is identical to upstream.
+#
+# NOTE: sample() lives on AtomDiffusion, not DiffusionModule.
+# AtomDiffusion wraps DiffusionModule (the network) as self.score_model.
 
 from __future__ import annotations
 
@@ -15,7 +18,7 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 
-from boltz.model.modules.diffusion import DiffusionModule
+from boltz.model.modules.diffusion import AtomDiffusion
 from boltz.model.modules.utils import compute_random_augmentation, default
 from boltz.model.loss.diffusion import weighted_rigid_align
 from boltz.model.potentials.potentials import get_potentials
@@ -45,12 +48,12 @@ CaptureCallback = Callable[[int, float, Tensor, float], None]
 # Subclass
 # ---------------------------------------------------------------------------
 
-class InstrumentedDiffusionModule(DiffusionModule):
-    """DiffusionModule with an intermediate-state capture hook.
+class InstrumentedAtomDiffusion(AtomDiffusion):
+    """AtomDiffusion with an intermediate-state capture hook.
 
-    Identical to the upstream ``DiffusionModule.sample()`` in every way
-    except that it accepts an optional ``intermediate_capture_fn`` callback
-    that is invoked after each denoising step.
+    Identical to the upstream ``AtomDiffusion.sample()`` in every way except
+    that it accepts an optional ``intermediate_capture_fn`` callback that is
+    invoked after each denoising step.
 
     Usage
     -----
@@ -58,11 +61,11 @@ class InstrumentedDiffusionModule(DiffusionModule):
     ...     if abs(t - 0.5) < 0.02:
     ...         np.save(f"x_hat_t{t:.1f}.npy", x_hat_0.cpu().numpy())
     ...
-    >>> module = InstrumentedDiffusionModule.from_pretrained(...)
+    >>> module = InstrumentedAtomDiffusion(score_model_args={...}, ...)
     >>> module.sample(..., intermediate_capture_fn=my_callback)
     """
 
-    def sample(  # noqa: C901  (complexity is inherited from upstream)
+    def sample(  # noqa: C901  (complexity inherited from upstream)
         self,
         atom_mask,
         num_sampling_steps=None,
@@ -74,8 +77,8 @@ class InstrumentedDiffusionModule(DiffusionModule):
         **network_condition_kwargs,
     ):
         # ------------------------------------------------------------------ #
-        # Everything below is copied verbatim from boltz sample() except the  #
-        # two lines marked <<< CAPTURE HOOK >>>.                               #
+        # Everything below is copied verbatim from AtomDiffusion.sample()     #
+        # except the two lines marked <<< CAPTURE HOOK >>>.                   #
         # ------------------------------------------------------------------ #
 
         if steering_args is not None and (
@@ -345,7 +348,7 @@ def make_timestep_capture_fn(
     sample_idx: int,
     atom_metadata: dict,
     num_sampling_steps: int,
-    tol: float = 0.5 / 200,  # half a step at 200-step schedule
+    tol: float | None = None,
 ) -> CaptureCallback:
     """Return a callback that saves x̂_0 at requested normalised timesteps.
 
@@ -367,15 +370,10 @@ def make_timestep_capture_fn(
           - "chain_ids":    list[str]  per atom
           - "res_names":    list[str]  three-letter codes per atom
     num_sampling_steps : int
-        Total number of denoising steps (used to set tolerance).
-    tol : float
-        Tolerance for matching t to a target. Default = half a step at 200
-        steps = 0.0025. Increase if your schedule has fewer steps.
-
-    Returns
-    -------
-    CaptureCallback
-        A function with signature (step_idx, t, x_hat_0, sigma_t) -> None.
+        Total number of denoising steps (used to compute default tolerance).
+    tol : float or None
+        Tolerance for matching t to a target.
+        Default = half a step = 0.5 / num_sampling_steps.
 
     Output files
     ------------
@@ -384,22 +382,22 @@ def make_timestep_capture_fn(
       - "t":           float scalar
       - "sigma_t":     float scalar
       - "step_idx":    int scalar
-    One metadata JSON written once (skipped if already exists):
+    One metadata JSON (written once, skipped if already exists):
       - {output_dir}/{protein_id}_atom_metadata.json
     """
     import json
     import os
     import numpy as np
 
-    tol = max(tol, 1.0 / (2 * num_sampling_steps))
+    if tol is None:
+        tol = 0.5 / num_sampling_steps
 
-    # Write atom metadata once
     meta_path = os.path.join(output_dir, f"{protein_id}_atom_metadata.json")
     if not os.path.exists(meta_path):
         with open(meta_path, "w") as f:
             json.dump(atom_metadata, f)
 
-    captured = set()
+    captured: set[float] = set()
 
     def callback(step_idx: int, t: float, x_hat_0: Tensor, sigma_t: float) -> None:
         for target_t in target_ts:
@@ -410,7 +408,6 @@ def make_timestep_capture_fn(
                     output_dir,
                     f"{protein_id}_s{sample_idx:02d}_t{target_t:.1f}.npz",
                 )
-                import numpy as np
                 np.savez(
                     out_path,
                     coords=x_hat_0.cpu().float().numpy(),
