@@ -1,0 +1,149 @@
+# Phase 0 protein selection
+# Status: DRAFT — awaiting final approval
+# DO NOT change after first experiment run.
+#
+# Source: Lewis et al. 2024/2025, Science 389 eadv9817
+#         Annotations: github.com/microsoft/bioemu-benchmarks
+#
+# Stratification:
+#   Axis 1: ref-to-ref RMSD (apo↔holo), bins: low ≤4 Å, mid 4–8 Å, high >8 Å
+#   Axis 2: sequence length (smallest / median / largest within bin)
+#   Exclusion: pocket_residues / total_residues > 0.25 (domain motion, not pocket)
+#
+# ConforMix note: ConforMix evaluated 31 of 34 proteins (3 excluded, identities
+#   unknown — not published in their repo). Up to 3 of our 10 may overlap with
+#   their exclusion set. Documented; cannot fix without their list.
+
+experiment:
+  name: phase0_noise_sanity
+  wandb_project: cryptic-pocket-phd
+  wandb_group: phase0_sanity
+  n_samples: 5
+  timesteps: [0.1, 0.3, 0.5, 0.7, 0.9]
+  random_seed: 42
+
+proteins:
+
+  # ── LOW RMSD BIN (≤4 Å) ─────────────────────────────────────────────────
+  # TODO: fill after user approval — 3 proteins needed from low bin
+
+  - uniprot: PENDING_LOW_SMALL
+    name: "PENDING"
+    rmsd_bin: low
+    size_slot: small
+
+  - uniprot: PENDING_LOW_MED
+    name: "PENDING"
+    rmsd_bin: low
+    size_slot: median
+
+  - uniprot: PENDING_LOW_LARGE
+    name: "PENDING"
+    rmsd_bin: low
+    size_slot: large
+
+  # ── MID RMSD BIN (4–8 Å) ────────────────────────────────────────────────
+
+  - uniprot: P26281
+    name: "TBD — fetch from UniProt"
+    length: 158
+    pocket_residues: 18
+    pocket_ratio: 0.114
+    rmsd_apo_holo: 4.10
+    rmsd_bin: mid
+    size_slot: small
+    notes: "confirmed; name TBD"
+
+  - uniprot: PENDING_MID_MED
+    name: "PENDING — replacement for P44542 (dropped, 44% ratio)"
+    rmsd_bin: mid
+    size_slot: median
+    notes: "candidates: P12758 (253 res, 18.6%, ~3.16 Å) or P08037 (286 res, 19.9%, ~4.86 Å)"
+
+  - uniprot: P0AG16
+    name: "TBD — fetch from UniProt"
+    length: 504
+    pocket_residues: 36
+    pocket_ratio: 0.071
+    rmsd_apo_holo: 4.73
+    rmsd_bin: mid
+    size_slot: large
+    notes: "confirmed; name TBD"
+
+  # ── HIGH RMSD BIN (>8 Å) ────────────────────────────────────────────────
+  # Note: bin edge adjusted to >5 Å based on actual data distribution
+
+  - uniprot: P9WPY3
+    name: "TBD — fetch from UniProt"
+    length: 184
+    pocket_residues: 41
+    pocket_ratio: 0.223
+    rmsd_apo_holo: 5.26
+    rmsd_bin: high
+    size_slot: small
+    notes: "confirmed; name TBD"
+
+  - uniprot: P08709
+    name: "TBD — fetch from UniProt"
+    length: 254
+    pocket_residues: 63
+    pocket_ratio: 0.248
+    rmsd_apo_holo: 5.14
+    rmsd_bin: high
+    size_slot: median
+    notes: "confirmed; name TBD; borderline ratio 24.8% — acceptable"
+
+  - uniprot: Q02763
+    name: "TBD — fetch from UniProt"
+    length: 327
+    pocket_residues: 42
+    pocket_ratio: 0.128
+    rmsd_apo_holo: 5.29
+    rmsd_bin: high
+    size_slot: large
+    notes: "confirmed; name TBD"
+
+  # ── WILDCARD ─────────────────────────────────────────────────────────────
+
+  - uniprot: PENDING_WILDCARD
+    name: "PENDING — replacement for P69441 adenylate kinase (dropped, 44% ratio)"
+    rmsd_bin: any
+    size_slot: wildcard
+    notes: |
+      VP35 (Q05318) NOT in Lewis set. Need: recognizable protein from PocketMiner
+      paper or Bowman 2026 benchmark, ratio ≤25%.
+      TEM-1 (P62593) already used. Kinase / beta-lactamase preferred.
+
+  # ── TEM-1 (named wildcard — confirmed) ───────────────────────────────────
+  - uniprot: P62593
+    name: "TEM-1 beta-lactamase"
+    length: 263
+    pocket_residues: 31
+    pocket_ratio: 0.118
+    rmsd_apo_holo: null  # fill from bioemu-benchmarks
+    rmsd_bin: null
+    size_slot: named_wildcard
+    notes: "recognizable name; appears in PocketMiner literature"
+
+# ── EXCLUDED FROM POOL ───────────────────────────────────────────────────────
+excluded:
+  - uniprot: Q16539
+    reason: "no annotation file in bioemu-benchmarks repo"
+
+  - uniprot: P02787
+    name: Serotransferrin
+    reason: "pocket_ratio=0.961 — whole protein annotated"
+
+  - uniprot: P12823
+    reason: "pocket_ratio=0.812 — whole domain annotated"
+
+  - uniprot: P0DP23
+    name: Calmodulin
+    reason: "pocket_ratio=0.993 — whole protein; also RMSD outlier (14.73 Å from domain reorientation)"
+
+  - uniprot: P69441
+    name: Adenylate kinase
+    reason: "pocket_ratio=0.444 — LID/NMP domain hinge, not localized cryptic pocket"
+
+  - uniprot: P44542
+    reason: "pocket_ratio=0.444 — domain motion suspected"

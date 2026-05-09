@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# uv
+.venv/
+uv.lock
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Data & checkpoints (large files)
+data/lewis_subset/*.pdb
+data/lewis_subset/*.cif
+external/boltz/
+external/pocketminer/
+external/conformix/
+*.ckpt
+*.pt
+*.pth
+*.npz
+*.h5
+
+# Results (committed selectively)
+results/phase0/per_protein/*.csv.tmp
+
+# W&B
+wandb/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets — NEVER commit
+.env
+*.key
