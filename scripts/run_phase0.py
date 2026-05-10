@@ -79,6 +79,7 @@ from cryptic_pocket_phd.intermediate_capture import (
     InstrumentedAtomDiffusion,
     make_timestep_capture_fn,
 )
+from cryptic_pocket_phd.fpocket_wrapper import score as fpocket_score
 from cryptic_pocket_phd.pocketminer_wrapper import score
 from cryptic_pocket_phd.residue_mapping import pocket_residue_indices
 
@@ -421,7 +422,8 @@ def run_phase0(
     # -----------------------------------------------------------------------
     # Per-protein: inject capture, run, score, correlate
     # -----------------------------------------------------------------------
-    all_results: dict = {}  # protein_id → {timestep → {sample → (rho_p, rho_all)}}
+    all_results: dict = {}         # protein_id → {timestep → {sample → (rho_p, rho_all)}}
+    all_fpocket_results: dict = {}  # same shape, fpocket scores
 
     for prot in proteins:
         uid = prot["uniprot"]
@@ -448,12 +450,14 @@ def run_phase0(
         # Score reference structure s_0
         print(f"  Scoring reference: {apo_pdb.name}")
         s_0 = score(str(apo_pdb))
+        s_0_fp = fpocket_score(str(apo_pdb))
         n_residues = len(s_0)
         pocket_idx = pocket_residue_indices(pocket_ranges, n_residues)
         print(f"  s_0: {n_residues} residues, {len(pocket_idx)} pocket indices")
 
         # Run n_samples, each capturing at specified timesteps
         prot_results: dict = {}
+        fpocket_prot_results: dict = {}
 
         for sample_idx in range(n_samples):
             print(f"  Sample {sample_idx + 1}/{n_samples}")
@@ -507,7 +511,7 @@ def run_phase0(
                 tmp_dir=pdb_dir,
             )
 
-            # Compute Spearman ρ per timestep
+            # Compute Spearman ρ per timestep (PocketMiner)
             for t, s_t in s_t_map.items():
                 if len(s_t) != n_residues:
                     print(f"  WARNING: s_t has {len(s_t)} residues, expected {n_residues}. Skipping t={t}")
@@ -518,7 +522,26 @@ def run_phase0(
                     prot_results[t] = {}
                 prot_results[t][sample_idx] = (rho_p, rho_all)
 
+            # fpocket Spearman ρ — score the same intermediate PDFs
+            for t in timesteps:
+                fp_pdb = pdb_dir / f"{uid}_s{sample_idx:02d}_t{t:.1f}.pdb"
+                if not fp_pdb.exists():
+                    continue
+                try:
+                    s_t_fp = fpocket_score(str(fp_pdb))
+                except Exception as exc:
+                    print(f"  fpocket WARNING t={t:.1f}: {exc}")
+                    continue
+                if len(s_t_fp) != n_residues:
+                    continue
+                rho_p_fp, rho_all_fp = compute_rho(s_t_fp, s_0_fp, pocket_idx)
+                print(f"  [fpocket] t={t:.1f} rho_pocket={rho_p_fp:.3f}  rho_all={rho_all_fp:.3f}")
+                if t not in fpocket_prot_results:
+                    fpocket_prot_results[t] = {}
+                fpocket_prot_results[t][sample_idx] = (rho_p_fp, rho_all_fp)
+
         all_results[uid] = prot_results
+        all_fpocket_results[uid] = fpocket_prot_results
 
     # -----------------------------------------------------------------------
     # Aggregate + write results
@@ -528,8 +551,16 @@ def run_phase0(
 
     write_results_csv(results_table, results_dir / "phase0_rho.csv")
 
+    # fpocket results
+    if all_fpocket_results:
+        fpocket_table = build_results_table(all_fpocket_results, timesteps)
+        write_results_csv(fpocket_table, results_dir / "phase0_rho_fpocket.csv")
+        print("\n--- fpocket Aggregate rho_pocket (mean [95% CI]) ---")
+        for t, stats in sorted(fpocket_table.get("aggregate", {}).items()):
+            print(f"  t={t:.1f}: {stats['point']:.3f} [{stats['ci_lower']:.3f}, {stats['ci_upper']:.3f}]")
+
     # Pretty print aggregate
-    print("\n--- Aggregate rho_pocket (mean [95% CI]) ---")
+    print("\n--- PocketMiner Aggregate rho_pocket (mean [95% CI]) ---")
     for t, stats in sorted(results_table.get("aggregate", {}).items()):
         print(f"  t={t:.1f}: {stats['point']:.3f} [{stats['ci_lower']:.3f}, {stats['ci_upper']:.3f}]")
 
