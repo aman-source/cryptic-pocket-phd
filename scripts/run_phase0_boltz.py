@@ -121,6 +121,12 @@ def run_phase0_boltz(
     if n_samples is None:
         n_samples = config["experiment"]["n_samples"]
 
+    # TODO(Phase 1 prerequisite): random_seed from config is not currently
+    # honored. Wire into pl.seed_everything(seed, workers=True) +
+    # torch.manual_seed(seed + sample_idx) per sample for reproducibility.
+    # Each sample should use seed_base + sample_idx so samples differ but
+    # are reproducible across runs.
+
     out_dir = Path(out_dir)
     capture_dir = out_dir / "captures"
     pdb_dir = out_dir / "intermediate_pdbs"
