@@ -543,6 +543,14 @@ def run_phase0(
         all_results[uid] = prot_results
         all_fpocket_results[uid] = fpocket_prot_results
 
+        # Per-protein checkpoint — survives crash before final aggregate
+        partial_table = build_results_table(all_results, timesteps)
+        write_results_csv(partial_table, results_dir / "phase0_rho_partial.csv")
+        if all_fpocket_results:
+            fp_partial = build_results_table(all_fpocket_results, timesteps)
+            write_results_csv(fp_partial, results_dir / "phase0_rho_fpocket_partial.csv")
+        print(f"  [checkpoint] {uid} written to phase0_rho_partial.csv")
+
     # -----------------------------------------------------------------------
     # Aggregate + write results
     # -----------------------------------------------------------------------
