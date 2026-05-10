@@ -29,11 +29,16 @@ Residue ordering:
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from typing import Optional
 
 import numpy as np
+
+# Must be set before any tensorflow import (even transitive).
+# tf_keras provides legacy Keras 2 API required by PocketMiner on TF 2.16+.
+os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
 
 # ---------------------------------------------------------------------------
 # PocketMiner source path
@@ -62,11 +67,6 @@ _model = None
 def _load_model():
     """Instantiate MQAModel and restore PocketMiner weights."""
     _ensure_pm_on_path()
-
-    # TF 2.16+ uses Keras 3 by default; PocketMiner requires the legacy Keras 2
-    # API (from tensorflow.keras import *).  Set this env var BEFORE importing TF.
-    import os
-    os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
 
     import tensorflow as tf
     from models import MQAModel  # noqa: PL — PocketMiner's models.py
