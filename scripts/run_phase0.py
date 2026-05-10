@@ -475,7 +475,9 @@ def run_phase0(
             # Inject InstrumentedAtomDiffusion for this sample
             instrument_model(model_module, capture_fn)
 
-            # Boltz trainer (CPU, no GPU)
+            # Boltz trainer — use GPU if available
+            import torch
+            _accel = "gpu" if torch.cuda.is_available() else "cpu"
             pred_writer = BoltzWriter(
                 data_dir=processed.targets_dir,
                 output_dir=boltz_out_dir / "predictions",
@@ -486,7 +488,7 @@ def run_phase0(
             trainer = Trainer(
                 default_root_dir=str(boltz_out_dir),
                 callbacks=[pred_writer],
-                accelerator="cpu",
+                accelerator=_accel,
                 devices=1,
                 precision=32,
                 enable_progress_bar=True,
