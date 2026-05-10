@@ -16,12 +16,12 @@ dependencies = [
     "requests",
     "tqdm",
     # TensorFlow + mdtraj: required for PocketMiner inference.
-    # TF 2.15 max supports Python 3.11; Python 3.12 requires TF 2.16+.
-    # TF 2.16 uses Keras 3 by default — pocketminer_wrapper patches the import
-    # with tf_keras for backwards compatibility if needed.
-    "tensorflow>=2.16",
-    "tf-keras",  # legacy Keras 2 API under tf_keras (shim for TF 2.16+)
-    "mdtraj>=1.9.7",
+    # Pinned to exact working versions verified 2026-05-10.
+    # TF 2.16+ uses Keras 3 by default; tf-keras provides legacy Keras 2 API.
+    # To upgrade: run integration tests first, bump all three together.
+    "tensorflow==2.18.1",
+    "tf-keras==2.18.0",  # legacy Keras 2 API under tf_keras (shim for TF 2.16+)
+    "mdtraj==1.11.0",
     # Boltz-1: pinned to exact commit used when writing InstrumentedDiffusionModule.
     # intermediate_capture.py copies sample() from this commit verbatim (+ hook).
     # To upgrade: diff upstream sample() against our copy before bumping this hash.
@@ -54,4 +54,5 @@ dev-dependencies = [
 [tool.pytest.ini_options]
 markers = [
     "integration: requires TF + mdtraj + PocketMiner weights (run on GPU machine)",
+    "requires_cache: requires Boltz CCD cache (~2 GB download); skip locally unless cache present",
 ]
