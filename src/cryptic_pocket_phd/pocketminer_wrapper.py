@@ -69,6 +69,9 @@ def _load_model():
     _ensure_pm_on_path()
 
     import tensorflow as tf
+    # Restrict TF to CPU — leaves all GPU memory for PyTorch/Boltz.
+    # Must be called before any TF GPU op. PocketMiner GVP is small; CPU adds <1s.
+    tf.config.set_visible_devices([], "GPU")
     from models import MQAModel  # noqa: PL — PocketMiner's models.py
     from util import load_checkpoint  # noqa: PL — PocketMiner's util.py
 
