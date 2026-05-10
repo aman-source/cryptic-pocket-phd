@@ -1,0 +1,251 @@
+uniprot,apo_pdb,n_residues,pocket_ranges,sample_idx,timestep,pdb_path
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",0,0.1,results/phase0_runpod/intermediate_pdbs/P79345_s00_t0.1.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",0,0.3,results/phase0_runpod/intermediate_pdbs/P79345_s00_t0.3.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",0,0.5,results/phase0_runpod/intermediate_pdbs/P79345_s00_t0.5.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",0,0.7,results/phase0_runpod/intermediate_pdbs/P79345_s00_t0.7.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",0,0.9,results/phase0_runpod/intermediate_pdbs/P79345_s00_t0.9.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",1,0.1,results/phase0_runpod/intermediate_pdbs/P79345_s01_t0.1.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",1,0.3,results/phase0_runpod/intermediate_pdbs/P79345_s01_t0.3.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",1,0.5,results/phase0_runpod/intermediate_pdbs/P79345_s01_t0.5.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",1,0.7,results/phase0_runpod/intermediate_pdbs/P79345_s01_t0.7.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",1,0.9,results/phase0_runpod/intermediate_pdbs/P79345_s01_t0.9.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",2,0.1,results/phase0_runpod/intermediate_pdbs/P79345_s02_t0.1.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",2,0.3,results/phase0_runpod/intermediate_pdbs/P79345_s02_t0.3.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",2,0.5,results/phase0_runpod/intermediate_pdbs/P79345_s02_t0.5.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",2,0.7,results/phase0_runpod/intermediate_pdbs/P79345_s02_t0.7.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",2,0.9,results/phase0_runpod/intermediate_pdbs/P79345_s02_t0.9.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",3,0.1,results/phase0_runpod/intermediate_pdbs/P79345_s03_t0.1.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",3,0.3,results/phase0_runpod/intermediate_pdbs/P79345_s03_t0.3.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",3,0.5,results/phase0_runpod/intermediate_pdbs/P79345_s03_t0.5.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",3,0.7,results/phase0_runpod/intermediate_pdbs/P79345_s03_t0.7.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",3,0.9,results/phase0_runpod/intermediate_pdbs/P79345_s03_t0.9.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",4,0.1,results/phase0_runpod/intermediate_pdbs/P79345_s04_t0.1.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",4,0.3,results/phase0_runpod/intermediate_pdbs/P79345_s04_t0.3.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",4,0.5,results/phase0_runpod/intermediate_pdbs/P79345_s04_t0.5.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",4,0.7,results/phase0_runpod/intermediate_pdbs/P79345_s04_t0.7.pdb
+P79345,/workspace/cryptic-pocket-phd/data/validation_pdbs/1NEP_A.pdb,130,"[[91, 105]]",4,0.9,results/phase0_runpod/intermediate_pdbs/P79345_s04_t0.9.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",0,0.1,results/phase0_runpod/intermediate_pdbs/P62593_s00_t0.1.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",0,0.3,results/phase0_runpod/intermediate_pdbs/P62593_s00_t0.3.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",0,0.5,results/phase0_runpod/intermediate_pdbs/P62593_s00_t0.5.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",0,0.7,results/phase0_runpod/intermediate_pdbs/P62593_s00_t0.7.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",0,0.9,results/phase0_runpod/intermediate_pdbs/P62593_s00_t0.9.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",1,0.1,results/phase0_runpod/intermediate_pdbs/P62593_s01_t0.1.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",1,0.3,results/phase0_runpod/intermediate_pdbs/P62593_s01_t0.3.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",1,0.5,results/phase0_runpod/intermediate_pdbs/P62593_s01_t0.5.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",1,0.7,results/phase0_runpod/intermediate_pdbs/P62593_s01_t0.7.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",1,0.9,results/phase0_runpod/intermediate_pdbs/P62593_s01_t0.9.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",2,0.1,results/phase0_runpod/intermediate_pdbs/P62593_s02_t0.1.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",2,0.3,results/phase0_runpod/intermediate_pdbs/P62593_s02_t0.3.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",2,0.5,results/phase0_runpod/intermediate_pdbs/P62593_s02_t0.5.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",2,0.7,results/phase0_runpod/intermediate_pdbs/P62593_s02_t0.7.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",2,0.9,results/phase0_runpod/intermediate_pdbs/P62593_s02_t0.9.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",3,0.1,results/phase0_runpod/intermediate_pdbs/P62593_s03_t0.1.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",3,0.3,results/phase0_runpod/intermediate_pdbs/P62593_s03_t0.3.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",3,0.5,results/phase0_runpod/intermediate_pdbs/P62593_s03_t0.5.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",3,0.7,results/phase0_runpod/intermediate_pdbs/P62593_s03_t0.7.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",3,0.9,results/phase0_runpod/intermediate_pdbs/P62593_s03_t0.9.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",4,0.1,results/phase0_runpod/intermediate_pdbs/P62593_s04_t0.1.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",4,0.3,results/phase0_runpod/intermediate_pdbs/P62593_s04_t0.3.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",4,0.5,results/phase0_runpod/intermediate_pdbs/P62593_s04_t0.5.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",4,0.7,results/phase0_runpod/intermediate_pdbs/P62593_s04_t0.7.pdb
+P62593,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JWP_A.pdb,263,"[[190, 200], [244, 263]]",4,0.9,results/phase0_runpod/intermediate_pdbs/P62593_s04_t0.9.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",0,0.1,results/phase0_runpod/intermediate_pdbs/O74933_s00_t0.1.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",0,0.3,results/phase0_runpod/intermediate_pdbs/O74933_s00_t0.3.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",0,0.5,results/phase0_runpod/intermediate_pdbs/O74933_s00_t0.5.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",0,0.7,results/phase0_runpod/intermediate_pdbs/O74933_s00_t0.7.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",0,0.9,results/phase0_runpod/intermediate_pdbs/O74933_s00_t0.9.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",1,0.1,results/phase0_runpod/intermediate_pdbs/O74933_s01_t0.1.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",1,0.3,results/phase0_runpod/intermediate_pdbs/O74933_s01_t0.3.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",1,0.5,results/phase0_runpod/intermediate_pdbs/O74933_s01_t0.5.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",1,0.7,results/phase0_runpod/intermediate_pdbs/O74933_s01_t0.7.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",1,0.9,results/phase0_runpod/intermediate_pdbs/O74933_s01_t0.9.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",2,0.1,results/phase0_runpod/intermediate_pdbs/O74933_s02_t0.1.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",2,0.3,results/phase0_runpod/intermediate_pdbs/O74933_s02_t0.3.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",2,0.5,results/phase0_runpod/intermediate_pdbs/O74933_s02_t0.5.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",2,0.7,results/phase0_runpod/intermediate_pdbs/O74933_s02_t0.7.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",2,0.9,results/phase0_runpod/intermediate_pdbs/O74933_s02_t0.9.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",3,0.1,results/phase0_runpod/intermediate_pdbs/O74933_s03_t0.1.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",3,0.3,results/phase0_runpod/intermediate_pdbs/O74933_s03_t0.3.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",3,0.5,results/phase0_runpod/intermediate_pdbs/O74933_s03_t0.5.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",3,0.7,results/phase0_runpod/intermediate_pdbs/O74933_s03_t0.7.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",3,0.9,results/phase0_runpod/intermediate_pdbs/O74933_s03_t0.9.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",4,0.1,results/phase0_runpod/intermediate_pdbs/O74933_s04_t0.1.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",4,0.3,results/phase0_runpod/intermediate_pdbs/O74933_s04_t0.3.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",4,0.5,results/phase0_runpod/intermediate_pdbs/O74933_s04_t0.5.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",4,0.7,results/phase0_runpod/intermediate_pdbs/O74933_s04_t0.7.pdb
+O74933,/workspace/cryptic-pocket-phd/data/validation_pdbs/2YQC_A.pdb,480,"[[105, 120], [280, 330]]",4,0.9,results/phase0_runpod/intermediate_pdbs/O74933_s04_t0.9.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",0,0.1,results/phase0_runpod/intermediate_pdbs/P26281_s00_t0.1.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",0,0.3,results/phase0_runpod/intermediate_pdbs/P26281_s00_t0.3.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",0,0.5,results/phase0_runpod/intermediate_pdbs/P26281_s00_t0.5.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",0,0.7,results/phase0_runpod/intermediate_pdbs/P26281_s00_t0.7.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",0,0.9,results/phase0_runpod/intermediate_pdbs/P26281_s00_t0.9.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",1,0.1,results/phase0_runpod/intermediate_pdbs/P26281_s01_t0.1.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",1,0.3,results/phase0_runpod/intermediate_pdbs/P26281_s01_t0.3.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",1,0.5,results/phase0_runpod/intermediate_pdbs/P26281_s01_t0.5.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",1,0.7,results/phase0_runpod/intermediate_pdbs/P26281_s01_t0.7.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",1,0.9,results/phase0_runpod/intermediate_pdbs/P26281_s01_t0.9.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",2,0.1,results/phase0_runpod/intermediate_pdbs/P26281_s02_t0.1.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",2,0.3,results/phase0_runpod/intermediate_pdbs/P26281_s02_t0.3.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",2,0.5,results/phase0_runpod/intermediate_pdbs/P26281_s02_t0.5.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",2,0.7,results/phase0_runpod/intermediate_pdbs/P26281_s02_t0.7.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",2,0.9,results/phase0_runpod/intermediate_pdbs/P26281_s02_t0.9.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",3,0.1,results/phase0_runpod/intermediate_pdbs/P26281_s03_t0.1.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",3,0.3,results/phase0_runpod/intermediate_pdbs/P26281_s03_t0.3.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",3,0.5,results/phase0_runpod/intermediate_pdbs/P26281_s03_t0.5.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",3,0.7,results/phase0_runpod/intermediate_pdbs/P26281_s03_t0.7.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",3,0.9,results/phase0_runpod/intermediate_pdbs/P26281_s03_t0.9.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",4,0.1,results/phase0_runpod/intermediate_pdbs/P26281_s04_t0.1.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",4,0.3,results/phase0_runpod/intermediate_pdbs/P26281_s04_t0.3.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",4,0.5,results/phase0_runpod/intermediate_pdbs/P26281_s04_t0.5.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",4,0.7,results/phase0_runpod/intermediate_pdbs/P26281_s04_t0.7.pdb
+P26281,/workspace/cryptic-pocket-phd/data/validation_pdbs/1HKA_A.pdb,158,"[[44, 52], [84, 92]]",4,0.9,results/phase0_runpod/intermediate_pdbs/P26281_s04_t0.9.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",0,0.1,results/phase0_runpod/intermediate_pdbs/P12758_s00_t0.1.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",0,0.3,results/phase0_runpod/intermediate_pdbs/P12758_s00_t0.3.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",0,0.5,results/phase0_runpod/intermediate_pdbs/P12758_s00_t0.5.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",0,0.7,results/phase0_runpod/intermediate_pdbs/P12758_s00_t0.7.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",0,0.9,results/phase0_runpod/intermediate_pdbs/P12758_s00_t0.9.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",1,0.1,results/phase0_runpod/intermediate_pdbs/P12758_s01_t0.1.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",1,0.3,results/phase0_runpod/intermediate_pdbs/P12758_s01_t0.3.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",1,0.5,results/phase0_runpod/intermediate_pdbs/P12758_s01_t0.5.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",1,0.7,results/phase0_runpod/intermediate_pdbs/P12758_s01_t0.7.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",1,0.9,results/phase0_runpod/intermediate_pdbs/P12758_s01_t0.9.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",2,0.1,results/phase0_runpod/intermediate_pdbs/P12758_s02_t0.1.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",2,0.3,results/phase0_runpod/intermediate_pdbs/P12758_s02_t0.3.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",2,0.5,results/phase0_runpod/intermediate_pdbs/P12758_s02_t0.5.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",2,0.7,results/phase0_runpod/intermediate_pdbs/P12758_s02_t0.7.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",2,0.9,results/phase0_runpod/intermediate_pdbs/P12758_s02_t0.9.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",3,0.1,results/phase0_runpod/intermediate_pdbs/P12758_s03_t0.1.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",3,0.3,results/phase0_runpod/intermediate_pdbs/P12758_s03_t0.3.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",3,0.5,results/phase0_runpod/intermediate_pdbs/P12758_s03_t0.5.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",3,0.7,results/phase0_runpod/intermediate_pdbs/P12758_s03_t0.7.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",3,0.9,results/phase0_runpod/intermediate_pdbs/P12758_s03_t0.9.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",4,0.1,results/phase0_runpod/intermediate_pdbs/P12758_s04_t0.1.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",4,0.3,results/phase0_runpod/intermediate_pdbs/P12758_s04_t0.3.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",4,0.5,results/phase0_runpod/intermediate_pdbs/P12758_s04_t0.5.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",4,0.7,results/phase0_runpod/intermediate_pdbs/P12758_s04_t0.7.pdb
+P12758,/workspace/cryptic-pocket-phd/data/validation_pdbs/1K3F_B.pdb,253,"[[161, 190], [224, 240]]",4,0.9,results/phase0_runpod/intermediate_pdbs/P12758_s04_t0.9.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",0,0.1,results/phase0_runpod/intermediate_pdbs/P0AG16_s00_t0.1.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",0,0.3,results/phase0_runpod/intermediate_pdbs/P0AG16_s00_t0.3.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",0,0.5,results/phase0_runpod/intermediate_pdbs/P0AG16_s00_t0.5.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",0,0.7,results/phase0_runpod/intermediate_pdbs/P0AG16_s00_t0.7.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",0,0.9,results/phase0_runpod/intermediate_pdbs/P0AG16_s00_t0.9.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",1,0.1,results/phase0_runpod/intermediate_pdbs/P0AG16_s01_t0.1.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",1,0.3,results/phase0_runpod/intermediate_pdbs/P0AG16_s01_t0.3.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",1,0.5,results/phase0_runpod/intermediate_pdbs/P0AG16_s01_t0.5.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",1,0.7,results/phase0_runpod/intermediate_pdbs/P0AG16_s01_t0.7.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",1,0.9,results/phase0_runpod/intermediate_pdbs/P0AG16_s01_t0.9.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",2,0.1,results/phase0_runpod/intermediate_pdbs/P0AG16_s02_t0.1.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",2,0.3,results/phase0_runpod/intermediate_pdbs/P0AG16_s02_t0.3.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",2,0.5,results/phase0_runpod/intermediate_pdbs/P0AG16_s02_t0.5.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",2,0.7,results/phase0_runpod/intermediate_pdbs/P0AG16_s02_t0.7.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",2,0.9,results/phase0_runpod/intermediate_pdbs/P0AG16_s02_t0.9.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",3,0.1,results/phase0_runpod/intermediate_pdbs/P0AG16_s03_t0.1.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",3,0.3,results/phase0_runpod/intermediate_pdbs/P0AG16_s03_t0.3.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",3,0.5,results/phase0_runpod/intermediate_pdbs/P0AG16_s03_t0.5.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",3,0.7,results/phase0_runpod/intermediate_pdbs/P0AG16_s03_t0.7.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",3,0.9,results/phase0_runpod/intermediate_pdbs/P0AG16_s03_t0.9.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",4,0.1,results/phase0_runpod/intermediate_pdbs/P0AG16_s04_t0.1.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",4,0.3,results/phase0_runpod/intermediate_pdbs/P0AG16_s04_t0.3.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",4,0.5,results/phase0_runpod/intermediate_pdbs/P0AG16_s04_t0.5.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",4,0.7,results/phase0_runpod/intermediate_pdbs/P0AG16_s04_t0.7.pdb
+P0AG16,/workspace/cryptic-pocket-phd/data/validation_pdbs/1ECJ_D.pdb,492,"[[323, 358]]",4,0.9,results/phase0_runpod/intermediate_pdbs/P0AG16_s04_t0.9.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",0,0.1,results/phase0_runpod/intermediate_pdbs/P9WPY3_s00_t0.1.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",0,0.3,results/phase0_runpod/intermediate_pdbs/P9WPY3_s00_t0.3.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",0,0.5,results/phase0_runpod/intermediate_pdbs/P9WPY3_s00_t0.5.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",0,0.7,results/phase0_runpod/intermediate_pdbs/P9WPY3_s00_t0.7.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",0,0.9,results/phase0_runpod/intermediate_pdbs/P9WPY3_s00_t0.9.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",1,0.1,results/phase0_runpod/intermediate_pdbs/P9WPY3_s01_t0.1.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",1,0.3,results/phase0_runpod/intermediate_pdbs/P9WPY3_s01_t0.3.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",1,0.5,results/phase0_runpod/intermediate_pdbs/P9WPY3_s01_t0.5.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",1,0.7,results/phase0_runpod/intermediate_pdbs/P9WPY3_s01_t0.7.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",1,0.9,results/phase0_runpod/intermediate_pdbs/P9WPY3_s01_t0.9.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",2,0.1,results/phase0_runpod/intermediate_pdbs/P9WPY3_s02_t0.1.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",2,0.3,results/phase0_runpod/intermediate_pdbs/P9WPY3_s02_t0.3.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",2,0.5,results/phase0_runpod/intermediate_pdbs/P9WPY3_s02_t0.5.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",2,0.7,results/phase0_runpod/intermediate_pdbs/P9WPY3_s02_t0.7.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",2,0.9,results/phase0_runpod/intermediate_pdbs/P9WPY3_s02_t0.9.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",3,0.1,results/phase0_runpod/intermediate_pdbs/P9WPY3_s03_t0.1.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",3,0.3,results/phase0_runpod/intermediate_pdbs/P9WPY3_s03_t0.3.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",3,0.5,results/phase0_runpod/intermediate_pdbs/P9WPY3_s03_t0.5.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",3,0.7,results/phase0_runpod/intermediate_pdbs/P9WPY3_s03_t0.7.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",3,0.9,results/phase0_runpod/intermediate_pdbs/P9WPY3_s03_t0.9.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",4,0.1,results/phase0_runpod/intermediate_pdbs/P9WPY3_s04_t0.1.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",4,0.3,results/phase0_runpod/intermediate_pdbs/P9WPY3_s04_t0.3.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",4,0.5,results/phase0_runpod/intermediate_pdbs/P9WPY3_s04_t0.5.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",4,0.7,results/phase0_runpod/intermediate_pdbs/P9WPY3_s04_t0.7.pdb
+P9WPY3,/workspace/cryptic-pocket-phd/data/validation_pdbs/2IYT_A.pdb,175,"[[100, 140]]",4,0.9,results/phase0_runpod/intermediate_pdbs/P9WPY3_s04_t0.9.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",0,0.1,results/phase0_runpod/intermediate_pdbs/P08709_s00_t0.1.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",0,0.3,results/phase0_runpod/intermediate_pdbs/P08709_s00_t0.3.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",0,0.5,results/phase0_runpod/intermediate_pdbs/P08709_s00_t0.5.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",0,0.7,results/phase0_runpod/intermediate_pdbs/P08709_s00_t0.7.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",0,0.9,results/phase0_runpod/intermediate_pdbs/P08709_s00_t0.9.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",1,0.1,results/phase0_runpod/intermediate_pdbs/P08709_s01_t0.1.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",1,0.3,results/phase0_runpod/intermediate_pdbs/P08709_s01_t0.3.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",1,0.5,results/phase0_runpod/intermediate_pdbs/P08709_s01_t0.5.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",1,0.7,results/phase0_runpod/intermediate_pdbs/P08709_s01_t0.7.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",1,0.9,results/phase0_runpod/intermediate_pdbs/P08709_s01_t0.9.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",2,0.1,results/phase0_runpod/intermediate_pdbs/P08709_s02_t0.1.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",2,0.3,results/phase0_runpod/intermediate_pdbs/P08709_s02_t0.3.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",2,0.5,results/phase0_runpod/intermediate_pdbs/P08709_s02_t0.5.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",2,0.7,results/phase0_runpod/intermediate_pdbs/P08709_s02_t0.7.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",2,0.9,results/phase0_runpod/intermediate_pdbs/P08709_s02_t0.9.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",3,0.1,results/phase0_runpod/intermediate_pdbs/P08709_s03_t0.1.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",3,0.3,results/phase0_runpod/intermediate_pdbs/P08709_s03_t0.3.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",3,0.5,results/phase0_runpod/intermediate_pdbs/P08709_s03_t0.5.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",3,0.7,results/phase0_runpod/intermediate_pdbs/P08709_s03_t0.7.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",3,0.9,results/phase0_runpod/intermediate_pdbs/P08709_s03_t0.9.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",4,0.1,results/phase0_runpod/intermediate_pdbs/P08709_s04_t0.1.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",4,0.3,results/phase0_runpod/intermediate_pdbs/P08709_s04_t0.3.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",4,0.5,results/phase0_runpod/intermediate_pdbs/P08709_s04_t0.5.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",4,0.7,results/phase0_runpod/intermediate_pdbs/P08709_s04_t0.7.pdb
+P08709,/workspace/cryptic-pocket-phd/data/validation_pdbs/1JBU_A.pdb,238,"[[40, 45], [81, 90], [155, 192], [210, 218]]",4,0.9,results/phase0_runpod/intermediate_pdbs/P08709_s04_t0.9.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",0,0.1,results/phase0_runpod/intermediate_pdbs/Q02763_s00_t0.1.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",0,0.3,results/phase0_runpod/intermediate_pdbs/Q02763_s00_t0.3.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",0,0.5,results/phase0_runpod/intermediate_pdbs/Q02763_s00_t0.5.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",0,0.7,results/phase0_runpod/intermediate_pdbs/Q02763_s00_t0.7.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",0,0.9,results/phase0_runpod/intermediate_pdbs/Q02763_s00_t0.9.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",1,0.1,results/phase0_runpod/intermediate_pdbs/Q02763_s01_t0.1.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",1,0.3,results/phase0_runpod/intermediate_pdbs/Q02763_s01_t0.3.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",1,0.5,results/phase0_runpod/intermediate_pdbs/Q02763_s01_t0.5.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",1,0.7,results/phase0_runpod/intermediate_pdbs/Q02763_s01_t0.7.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",1,0.9,results/phase0_runpod/intermediate_pdbs/Q02763_s01_t0.9.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",2,0.1,results/phase0_runpod/intermediate_pdbs/Q02763_s02_t0.1.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",2,0.3,results/phase0_runpod/intermediate_pdbs/Q02763_s02_t0.3.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",2,0.5,results/phase0_runpod/intermediate_pdbs/Q02763_s02_t0.5.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",2,0.7,results/phase0_runpod/intermediate_pdbs/Q02763_s02_t0.7.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",2,0.9,results/phase0_runpod/intermediate_pdbs/Q02763_s02_t0.9.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",3,0.1,results/phase0_runpod/intermediate_pdbs/Q02763_s03_t0.1.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",3,0.3,results/phase0_runpod/intermediate_pdbs/Q02763_s03_t0.3.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",3,0.5,results/phase0_runpod/intermediate_pdbs/Q02763_s03_t0.5.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",3,0.7,results/phase0_runpod/intermediate_pdbs/Q02763_s03_t0.7.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",3,0.9,results/phase0_runpod/intermediate_pdbs/Q02763_s03_t0.9.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",4,0.1,results/phase0_runpod/intermediate_pdbs/Q02763_s04_t0.1.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",4,0.3,results/phase0_runpod/intermediate_pdbs/Q02763_s04_t0.3.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",4,0.5,results/phase0_runpod/intermediate_pdbs/Q02763_s04_t0.5.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",4,0.7,results/phase0_runpod/intermediate_pdbs/Q02763_s04_t0.7.pdb
+Q02763,/workspace/cryptic-pocket-phd/data/validation_pdbs/1FVR_A.pdb,299,"[[10, 33], [164, 181]]",4,0.9,results/phase0_runpod/intermediate_pdbs/Q02763_s04_t0.9.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",0,0.1,results/phase0_runpod/intermediate_pdbs/P61586_s00_t0.1.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",0,0.3,results/phase0_runpod/intermediate_pdbs/P61586_s00_t0.3.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",0,0.5,results/phase0_runpod/intermediate_pdbs/P61586_s00_t0.5.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",0,0.7,results/phase0_runpod/intermediate_pdbs/P61586_s00_t0.7.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",0,0.9,results/phase0_runpod/intermediate_pdbs/P61586_s00_t0.9.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",1,0.1,results/phase0_runpod/intermediate_pdbs/P61586_s01_t0.1.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",1,0.3,results/phase0_runpod/intermediate_pdbs/P61586_s01_t0.3.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",1,0.5,results/phase0_runpod/intermediate_pdbs/P61586_s01_t0.5.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",1,0.7,results/phase0_runpod/intermediate_pdbs/P61586_s01_t0.7.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",1,0.9,results/phase0_runpod/intermediate_pdbs/P61586_s01_t0.9.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",2,0.1,results/phase0_runpod/intermediate_pdbs/P61586_s02_t0.1.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",2,0.3,results/phase0_runpod/intermediate_pdbs/P61586_s02_t0.3.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",2,0.5,results/phase0_runpod/intermediate_pdbs/P61586_s02_t0.5.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",2,0.7,results/phase0_runpod/intermediate_pdbs/P61586_s02_t0.7.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",2,0.9,results/phase0_runpod/intermediate_pdbs/P61586_s02_t0.9.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",3,0.1,results/phase0_runpod/intermediate_pdbs/P61586_s03_t0.1.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",3,0.3,results/phase0_runpod/intermediate_pdbs/P61586_s03_t0.3.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",3,0.5,results/phase0_runpod/intermediate_pdbs/P61586_s03_t0.5.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",3,0.7,results/phase0_runpod/intermediate_pdbs/P61586_s03_t0.7.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",3,0.9,results/phase0_runpod/intermediate_pdbs/P61586_s03_t0.9.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",4,0.1,results/phase0_runpod/intermediate_pdbs/P61586_s04_t0.1.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",4,0.3,results/phase0_runpod/intermediate_pdbs/P61586_s04_t0.3.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",4,0.5,results/phase0_runpod/intermediate_pdbs/P61586_s04_t0.5.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",4,0.7,results/phase0_runpod/intermediate_pdbs/P61586_s04_t0.7.pdb
+P61586,/workspace/cryptic-pocket-phd/data/validation_pdbs/1XCG_B.pdb,178,"[[12, 48]]",4,0.9,results/phase0_runpod/intermediate_pdbs/P61586_s04_t0.9.pdb

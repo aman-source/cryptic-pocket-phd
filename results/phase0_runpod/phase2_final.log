@@ -1,0 +1,594 @@
+=== Phase 2: PocketMiner + fpocket scoring (CPU) ===
+Manifest rows: 250, Timesteps: [0.1, 0.3, 0.5, 0.7, 0.9]
+
+Loading PocketMiner model...
+2026-05-10 13:47:52.461445: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1778420872.481247   11279 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1778420872.487255   11279 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-05-10 13:47:52.509006: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-05-10 13:47:58.259646: E external/local_xla/xla/stream_executor/cuda/cuda_driver.cc:152] failed call to cuInit: INTERNAL: CUDA error: Failed call to cuInit: CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected
+CHECKPOINT RESTORED FROM /workspace/cryptic-pocket-phd/external/pocketminer/models/pocketminer
+PocketMiner loaded.
+
+=== NPC2 (P79345) ===
+  Scoring reference: 1NEP_A.pdb
+  s_0: 130 residues, 15 pocket indices
+  s00 t=0.1  rho_pocket=0.343  rho_all=0.296
+  [fp] s00 t=0.1  rho_pocket=-0.259
+  s00 t=0.3  rho_pocket=0.361  rho_all=0.273
+  [fp] s00 t=0.3  rho_pocket=-0.343
+  s00 t=0.5  rho_pocket=0.282  rho_all=0.274
+  [fp] s00 t=0.5  rho_pocket=-0.499
+  s00 t=0.7  rho_pocket=0.418  rho_all=0.287
+  [fp] s00 t=0.7  rho_pocket=-0.072
+  s00 t=0.9  rho_pocket=0.504  rho_all=0.257
+  [fp] s00 t=0.9  rho_pocket=0.225
+  s01 t=0.1  rho_pocket=0.107  rho_all=0.189
+  [fp] s01 t=0.1  rho_pocket=0.286
+  s01 t=0.3  rho_pocket=0.271  rho_all=0.316
+  [fp] s01 t=0.3  rho_pocket=0.260
+  s01 t=0.5  rho_pocket=0.300  rho_all=0.347
+  [fp] s01 t=0.5  rho_pocket=0.021
+  s01 t=0.7  rho_pocket=0.350  rho_all=0.277
+  [fp] s01 t=0.7  rho_pocket=0.258
+  s01 t=0.9  rho_pocket=0.479  rho_all=0.388
+  [fp] s01 t=0.9  rho_pocket=-0.134
+  s02 t=0.1  rho_pocket=0.200  rho_all=0.174
+  [fp] s02 t=0.1  rho_pocket=0.626
+  s02 t=0.3  rho_pocket=0.314  rho_all=0.302
+  [fp] s02 t=0.3  rho_pocket=-0.183
+  s02 t=0.5  rho_pocket=0.254  rho_all=0.336
+  [fp] s02 t=0.5  rho_pocket=-0.029
+  s02 t=0.7  rho_pocket=0.239  rho_all=0.291
+  [fp] s02 t=0.7  rho_pocket=0.194
+  s02 t=0.9  rho_pocket=0.296  rho_all=0.201
+  [fp] s02 t=0.9  rho_pocket=-0.335
+  s03 t=0.1  rho_pocket=0.146  rho_all=0.208
+  [fp] s03 t=0.1  rho_pocket=0.147
+  s03 t=0.3  rho_pocket=0.225  rho_all=0.211
+  [fp] s03 t=0.3  rho_pocket=0.097
+  s03 t=0.5  rho_pocket=0.268  rho_all=0.325
+  [fp] s03 t=0.5  rho_pocket=0.438
+  s03 t=0.7  rho_pocket=0.254  rho_all=0.274
+  [fp] s03 t=0.7  rho_pocket=-0.212
+  s03 t=0.9  rho_pocket=0.229  rho_all=0.223
+  [fp] s03 t=0.9  rho_pocket=0.154
+  s04 t=0.1  rho_pocket=-0.007  rho_all=0.305
+  [fp] s04 t=0.1  rho_pocket=0.254
+  s04 t=0.3  rho_pocket=0.082  rho_all=0.260
+  [fp] s04 t=0.3  rho_pocket=-0.007
+  s04 t=0.5  rho_pocket=0.296  rho_all=0.369
+  [fp] s04 t=0.5  rho_pocket=-0.137
+  s04 t=0.7  rho_pocket=0.389  rho_all=0.346
+  [fp] s04 t=0.7  rho_pocket=0.494
+  s04 t=0.9  rho_pocket=0.311  rho_all=0.323
+  [fp] s04 t=0.9  rho_pocket=0.223
+Results written to results/phase0_runpod/results/phase0_rho_partial.csv and results/phase0_runpod/results/phase0_rho_partial_aggregate.csv
+Results written to results/phase0_runpod/results/phase0_rho_fpocket_partial.csv and results/phase0_runpod/results/phase0_rho_fpocket_partial_aggregate.csv
+  [checkpoint] P79345 written
+
+=== TEM-1 (P62593) ===
+  Scoring reference: 1JWP_A.pdb
+  s_0: 263 residues, 31 pocket indices
+  s00 t=0.1  rho_pocket=0.432  rho_all=0.503
+  [fp] s00 t=0.1  rho_pocket=-0.379
+  s00 t=0.3  rho_pocket=0.466  rho_all=0.530
+  [fp] s00 t=0.3  rho_pocket=-0.062
+  s00 t=0.5  rho_pocket=0.470  rho_all=0.526
+  [fp] s00 t=0.5  rho_pocket=-0.309
+  s00 t=0.7  rho_pocket=0.410  rho_all=0.347
+  [fp] s00 t=0.7  rho_pocket=-0.353
+  s00 t=0.9  rho_pocket=0.252  rho_all=0.323
+  [fp] s00 t=0.9  rho_pocket=0.046
+  s01 t=0.1  rho_pocket=0.565  rho_all=0.545
+  [fp] s01 t=0.1  rho_pocket=0.195
+  s01 t=0.3  rho_pocket=0.478  rho_all=0.509
+  [fp] s01 t=0.3  rho_pocket=-0.261
+  s01 t=0.5  rho_pocket=0.512  rho_all=0.461
+  [fp] s01 t=0.5  rho_pocket=0.026
+  s01 t=0.7  rho_pocket=0.470  rho_all=0.366
+  [fp] s01 t=0.7  rho_pocket=-0.103
+  s01 t=0.9  rho_pocket=0.328  rho_all=0.376
+  [fp] s01 t=0.9  rho_pocket=0.030
+  s02 t=0.1  rho_pocket=0.727  rho_all=0.466
+  [fp] s02 t=0.1  rho_pocket=-0.055
+  s02 t=0.3  rho_pocket=0.654  rho_all=0.472
+  [fp] s02 t=0.3  rho_pocket=-0.121
+  s02 t=0.5  rho_pocket=0.626  rho_all=0.459
+  [fp] s02 t=0.5  rho_pocket=0.085
+  s02 t=0.7  rho_pocket=0.360  rho_all=0.270
+  [fp] s02 t=0.7  rho_pocket=0.002
+  s02 t=0.9  rho_pocket=0.389  rho_all=0.304
+  [fp] s02 t=0.9  rho_pocket=-0.004
+  s03 t=0.1  rho_pocket=0.506  rho_all=0.512
+  [fp] s03 t=0.1  rho_pocket=-0.132
+  s03 t=0.3  rho_pocket=0.555  rho_all=0.520
+  [fp] s03 t=0.3  rho_pocket=-0.206
+  s03 t=0.5  rho_pocket=0.396  rho_all=0.484
+  [fp] s03 t=0.5  rho_pocket=-0.073
+  s03 t=0.7  rho_pocket=0.353  rho_all=0.350
+  [fp] s03 t=0.7  rho_pocket=0.021
+  s03 t=0.9  rho_pocket=0.644  rho_all=0.390
+  [fp] s03 t=0.9  rho_pocket=-0.035
+  s04 t=0.1  rho_pocket=0.545  rho_all=0.559
+  [fp] s04 t=0.1  rho_pocket=0.217
+  s04 t=0.3  rho_pocket=0.591  rho_all=0.537
+  [fp] s04 t=0.3  rho_pocket=-0.008
+  s04 t=0.5  rho_pocket=0.579  rho_all=0.341
+  [fp] s04 t=0.5  rho_pocket=-0.101
+  s04 t=0.7  rho_pocket=0.508  rho_all=0.382
+  [fp] s04 t=0.7  rho_pocket=-0.271
+  s04 t=0.9  rho_pocket=0.282  rho_all=0.289
+  [fp] s04 t=0.9  rho_pocket=-0.009
+Results written to results/phase0_runpod/results/phase0_rho_partial.csv and results/phase0_runpod/results/phase0_rho_partial_aggregate.csv
+Results written to results/phase0_runpod/results/phase0_rho_fpocket_partial.csv and results/phase0_runpod/results/phase0_rho_fpocket_partial_aggregate.csv
+  [checkpoint] P62593 written
+
+=== UAP1 (O74933) ===
+  Scoring reference: 2YQC_A.pdb
+  s_0: 480 residues, 67 pocket indices
+  s00 t=0.1  rho_pocket=0.564  rho_all=0.243
+  [fp] s00 t=0.1  rho_pocket=0.034
+  s00 t=0.3  rho_pocket=0.500  rho_all=0.285
+  [fp] s00 t=0.3  rho_pocket=-0.079
+  s00 t=0.5  rho_pocket=0.367  rho_all=0.234
+  [fp] s00 t=0.5  rho_pocket=0.102
+  s00 t=0.7  rho_pocket=0.168  rho_all=0.132
+  [fp] s00 t=0.7  rho_pocket=0.281
+  s00 t=0.9  rho_pocket=0.096  rho_all=0.007
+  [fp] s00 t=0.9  rho_pocket=0.245
+  s01 t=0.1  rho_pocket=0.604  rho_all=0.297
+  [fp] s01 t=0.1  rho_pocket=-0.153
+  s01 t=0.3  rho_pocket=0.571  rho_all=0.279
+  [fp] s01 t=0.3  rho_pocket=-0.133
+  s01 t=0.5  rho_pocket=0.243  rho_all=0.182
+  [fp] s01 t=0.5  rho_pocket=0.035
+  s01 t=0.7  rho_pocket=-0.014  rho_all=0.109
+  [fp] s01 t=0.7  rho_pocket=0.048
+  s01 t=0.9  rho_pocket=0.091  rho_all=0.127
+  [fp] s01 t=0.9  rho_pocket=0.111
+  s02 t=0.1  rho_pocket=0.217  rho_all=0.274
+  [fp] s02 t=0.1  rho_pocket=-0.211
+  s02 t=0.3  rho_pocket=0.329  rho_all=0.295
+  [fp] s02 t=0.3  rho_pocket=0.225
+  s02 t=0.5  rho_pocket=0.308  rho_all=0.203
+  [fp] s02 t=0.5  rho_pocket=-0.126
+  s02 t=0.7  rho_pocket=-0.295  rho_all=0.059
+  [fp] s02 t=0.7  rho_pocket=0.049
+  s02 t=0.9  rho_pocket=0.232  rho_all=0.092
+  [fp] s02 t=0.9  rho_pocket=0.134
+  s03 t=0.1  rho_pocket=0.218  rho_all=0.345
+  [fp] s03 t=0.1  rho_pocket=0.092
+  s03 t=0.3  rho_pocket=0.240  rho_all=0.337
+  [fp] s03 t=0.3  rho_pocket=0.010
+  s03 t=0.5  rho_pocket=0.198  rho_all=0.181
+  [fp] s03 t=0.5  rho_pocket=0.173
+  s03 t=0.7  rho_pocket=0.244  rho_all=0.186
+  [fp] s03 t=0.7  rho_pocket=-0.001
+  s03 t=0.9  rho_pocket=0.026  rho_all=0.022
+  [fp] s03 t=0.9  rho_pocket=0.171
+  s04 t=0.1  rho_pocket=0.343  rho_all=0.268
+  [fp] s04 t=0.1  rho_pocket=0.048
+  s04 t=0.3  rho_pocket=0.468  rho_all=0.292
+  [fp] s04 t=0.3  rho_pocket=0.074
+  s04 t=0.5  rho_pocket=0.202  rho_all=0.135
+  [fp] s04 t=0.5  rho_pocket=-0.204
+  s04 t=0.7  rho_pocket=0.039  rho_all=0.066
+  [fp] s04 t=0.7  rho_pocket=0.209
+  s04 t=0.9  rho_pocket=0.280  rho_all=0.114
+  [fp] s04 t=0.9  rho_pocket=0.160
+Results written to results/phase0_runpod/results/phase0_rho_partial.csv and results/phase0_runpod/results/phase0_rho_partial_aggregate.csv
+Results written to results/phase0_runpod/results/phase0_rho_fpocket_partial.csv and results/phase0_runpod/results/phase0_rho_fpocket_partial_aggregate.csv
+  [checkpoint] O74933 written
+
+=== FolK / HPPK (P26281) ===
+  Scoring reference: 1HKA_A.pdb
+  s_0: 158 residues, 18 pocket indices
+  s00 t=0.1  rho_pocket=0.073  rho_all=0.267
+  [fp] s00 t=0.1  rho_pocket=0.056
+  s00 t=0.3  rho_pocket=0.191  rho_all=0.243
+  [fp] s00 t=0.3  rho_pocket=-0.117
+  s00 t=0.5  rho_pocket=0.527  rho_all=0.282
+  [fp] s00 t=0.5  rho_pocket=-0.254
+  s00 t=0.7  rho_pocket=0.672  rho_all=0.082
+  [fp] s00 t=0.7  rho_pocket=0.088
+  s00 t=0.9  rho_pocket=0.168  rho_all=0.153
+  [fp] s00 t=0.9  rho_pocket=0.495
+  s01 t=0.1  rho_pocket=-0.003  rho_all=0.204
+  [fp] s01 t=0.1  rho_pocket=0.368
+  s01 t=0.3  rho_pocket=0.416  rho_all=0.095
+  [fp] s01 t=0.3  rho_pocket=0.159
+  s01 t=0.5  rho_pocket=-0.088  rho_all=0.021
+  [fp] s01 t=0.5  rho_pocket=0.187
+  s01 t=0.7  rho_pocket=0.470  rho_all=0.135
+  [fp] s01 t=0.7  rho_pocket=0.009
+  s01 t=0.9  rho_pocket=0.678  rho_all=0.134
+  [fp] s01 t=0.9  rho_pocket=-0.158
+  s02 t=0.1  rho_pocket=-0.158  rho_all=0.218
+  [fp] s02 t=0.1  rho_pocket=0.375
+  s02 t=0.3  rho_pocket=-0.084  rho_all=0.249
+  [fp] s02 t=0.3  rho_pocket=0.011
+  s02 t=0.5  rho_pocket=0.209  rho_all=0.082
+  [fp] s02 t=0.5  rho_pocket=0.047
+  s02 t=0.7  rho_pocket=-0.011  rho_all=-0.099
+  [fp] s02 t=0.7  rho_pocket=0.078
+  s02 t=0.9  rho_pocket=0.534  rho_all=-0.001
+  [fp] s02 t=0.9  rho_pocket=-0.117
+  s03 t=0.1  rho_pocket=0.220  rho_all=0.037
+  [fp] s03 t=0.1  rho_pocket=0.047
+  s03 t=0.3  rho_pocket=0.624  rho_all=0.049
+  [fp] s03 t=0.3  rho_pocket=0.099
+  s03 t=0.5  rho_pocket=0.267  rho_all=0.040
+  [fp] s03 t=0.5  rho_pocket=-0.180
+  s03 t=0.7  rho_pocket=0.531  rho_all=0.060
+  [fp] s03 t=0.7  rho_pocket=0.162
+  s03 t=0.9  rho_pocket=0.546  rho_all=0.205
+  [fp] s03 t=0.9  rho_pocket=-0.303
+  s04 t=0.1  rho_pocket=0.472  rho_all=0.336
+  [fp] s04 t=0.1  rho_pocket=0.005
+  s04 t=0.3  rho_pocket=0.375  rho_all=0.339
+  [fp] s04 t=0.3  rho_pocket=0.487
+  s04 t=0.5  rho_pocket=0.434  rho_all=0.131
+  [fp] s04 t=0.5  rho_pocket=-0.332
+  s04 t=0.7  rho_pocket=0.216  rho_all=0.041
+  [fp] s04 t=0.7  rho_pocket=-0.005
+  s04 t=0.9  rho_pocket=0.024  rho_all=0.026
+  [fp] s04 t=0.9  rho_pocket=-0.113
+Results written to results/phase0_runpod/results/phase0_rho_partial.csv and results/phase0_runpod/results/phase0_rho_partial_aggregate.csv
+Results written to results/phase0_runpod/results/phase0_rho_fpocket_partial.csv and results/phase0_runpod/results/phase0_rho_fpocket_partial_aggregate.csv
+  [checkpoint] P26281 written
+
+=== UdP / UPase (P12758) ===
+  Scoring reference: 1K3F_B.pdb
+  s_0: 253 residues, 47 pocket indices
+  s00 t=0.1  rho_pocket=0.473  rho_all=0.421
+  [fp] s00 t=0.1  rho_pocket=0.059
+  s00 t=0.3  rho_pocket=0.554  rho_all=0.433
+  [fp] s00 t=0.3  rho_pocket=-0.167
+  s00 t=0.5  rho_pocket=0.342  rho_all=0.322
+  [fp] s00 t=0.5  rho_pocket=-0.146
+  s00 t=0.7  rho_pocket=0.199  rho_all=0.332
+  [fp] s00 t=0.7  rho_pocket=-0.083
+  s00 t=0.9  rho_pocket=0.390  rho_all=0.341
+  [fp] s00 t=0.9  rho_pocket=0.352
+  s01 t=0.1  rho_pocket=0.545  rho_all=0.353
+  [fp] s01 t=0.1  rho_pocket=-0.370
+  s01 t=0.3  rho_pocket=0.503  rho_all=0.383
+  [fp] s01 t=0.3  rho_pocket=0.053
+  s01 t=0.5  rho_pocket=0.406  rho_all=0.375
+  [fp] s01 t=0.5  rho_pocket=-0.010
+  s01 t=0.7  rho_pocket=0.440  rho_all=0.285
+  [fp] s01 t=0.7  rho_pocket=0.096
+  s01 t=0.9  rho_pocket=0.247  rho_all=0.117
+  [fp] s01 t=0.9  rho_pocket=0.040
+  s02 t=0.1  rho_pocket=0.553  rho_all=0.450
+  [fp] s02 t=0.1  rho_pocket=-0.041
+  s02 t=0.3  rho_pocket=0.556  rho_all=0.433
+  [fp] s02 t=0.3  rho_pocket=-0.072
+  s02 t=0.5  rho_pocket=0.351  rho_all=0.338
+  [fp] s02 t=0.5  rho_pocket=-0.160
+  s02 t=0.7  rho_pocket=0.455  rho_all=0.366
+  [fp] s02 t=0.7  rho_pocket=0.191
+  s02 t=0.9  rho_pocket=0.251  rho_all=0.325
+  [fp] s02 t=0.9  rho_pocket=-0.019
+  s03 t=0.1  rho_pocket=0.535  rho_all=0.381
+  [fp] s03 t=0.1  rho_pocket=-0.400
+  s03 t=0.3  rho_pocket=0.361  rho_all=0.307
+  [fp] s03 t=0.3  rho_pocket=0.048
+  s03 t=0.5  rho_pocket=0.328  rho_all=0.406
+  [fp] s03 t=0.5  rho_pocket=0.199
+  s03 t=0.7  rho_pocket=0.459  rho_all=0.380
+  [fp] s03 t=0.7  rho_pocket=0.221
+  s03 t=0.9  rho_pocket=0.481  rho_all=0.371
+  [fp] s03 t=0.9  rho_pocket=-0.175
+  s04 t=0.1  rho_pocket=0.443  rho_all=0.392
+  [fp] s04 t=0.1  rho_pocket=-0.083
+  s04 t=0.3  rho_pocket=0.498  rho_all=0.404
+  [fp] s04 t=0.3  rho_pocket=-0.124
+  s04 t=0.5  rho_pocket=0.479  rho_all=0.358
+  [fp] s04 t=0.5  rho_pocket=-0.077
+  s04 t=0.7  rho_pocket=0.290  rho_all=0.306
+  [fp] s04 t=0.7  rho_pocket=-0.018
+  s04 t=0.9  rho_pocket=0.412  rho_all=0.344
+  [fp] s04 t=0.9  rho_pocket=0.131
+Results written to results/phase0_runpod/results/phase0_rho_partial.csv and results/phase0_runpod/results/phase0_rho_partial_aggregate.csv
+Results written to results/phase0_runpod/results/phase0_rho_fpocket_partial.csv and results/phase0_runpod/results/phase0_rho_fpocket_partial_aggregate.csv
+  [checkpoint] P12758 written
+
+=== PurF / GPAT (P0AG16) ===
+  Scoring reference: 1ECJ_D.pdb
+  s_0: 492 residues, 36 pocket indices
+  s00 t=0.1  rho_pocket=0.335  rho_all=0.106
+  [fp] s00 t=0.1  rho_pocket=-0.106
+  s00 t=0.3  rho_pocket=0.302  rho_all=0.115
+  [fp] s00 t=0.3  rho_pocket=0.044
+  s00 t=0.5  rho_pocket=0.201  rho_all=0.113
+  [fp] s00 t=0.5  rho_pocket=0.070
+  s00 t=0.7  rho_pocket=0.088  rho_all=0.205
+  [fp] s00 t=0.7  rho_pocket=0.010
+  s00 t=0.9  rho_pocket=-0.021  rho_all=0.140
+  [fp] s00 t=0.9  rho_pocket=-0.408
+  s01 t=0.1  rho_pocket=0.321  rho_all=0.209
+  [fp] s01 t=0.1  rho_pocket=0.143
+  s01 t=0.3  rho_pocket=0.285  rho_all=0.197
+  [fp] s01 t=0.3  rho_pocket=-0.191
+  s01 t=0.5  rho_pocket=0.101  rho_all=0.218
+  [fp] s01 t=0.5  rho_pocket=-0.086
+  s01 t=0.7  rho_pocket=0.264  rho_all=0.127
+  [fp] s01 t=0.7  rho_pocket=-0.229
+  s01 t=0.9  rho_pocket=-0.081  rho_all=0.072
+  [fp] s01 t=0.9  rho_pocket=0.051
+  s02 t=0.1  rho_pocket=0.440  rho_all=0.244
+  [fp] s02 t=0.1  rho_pocket=0.074
+  s02 t=0.3  rho_pocket=0.360  rho_all=0.249
+  [fp] s02 t=0.3  rho_pocket=-0.130
+  s02 t=0.5  rho_pocket=0.159  rho_all=0.185
+  [fp] s02 t=0.5  rho_pocket=0.070
+  s02 t=0.7  rho_pocket=-0.027  rho_all=0.183
+  [fp] s02 t=0.7  rho_pocket=-0.190
+  s02 t=0.9  rho_pocket=0.261  rho_all=0.180
+  [fp] s02 t=0.9  rho_pocket=-0.123
+  s03 t=0.1  rho_pocket=0.352  rho_all=0.284
+  [fp] s03 t=0.1  rho_pocket=-0.146
+  s03 t=0.3  rho_pocket=0.410  rho_all=0.237
+  [fp] s03 t=0.3  rho_pocket=-0.010
+  s03 t=0.5  rho_pocket=0.034  rho_all=0.149
+  [fp] s03 t=0.5  rho_pocket=-0.003
+  s03 t=0.7  rho_pocket=0.182  rho_all=0.205
+  [fp] s03 t=0.7  rho_pocket=-0.309
+  s03 t=0.9  rho_pocket=0.200  rho_all=0.116
+  [fp] s03 t=0.9  rho_pocket=-0.106
+  s04 t=0.1  rho_pocket=0.397  rho_all=0.217
+  [fp] s04 t=0.1  rho_pocket=-0.045
+  s04 t=0.3  rho_pocket=0.394  rho_all=0.221
+  [fp] s04 t=0.3  rho_pocket=-0.248
+  s04 t=0.5  rho_pocket=-0.037  rho_all=0.141
+  [fp] s04 t=0.5  rho_pocket=0.129
+  s04 t=0.7  rho_pocket=0.222  rho_all=0.243
+  [fp] s04 t=0.7  rho_pocket=0.035
+  s04 t=0.9  rho_pocket=-0.090  rho_all=0.147
+  [fp] s04 t=0.9  rho_pocket=-0.206
+Results written to results/phase0_runpod/results/phase0_rho_partial.csv and results/phase0_runpod/results/phase0_rho_partial_aggregate.csv
+Results written to results/phase0_runpod/results/phase0_rho_fpocket_partial.csv and results/phase0_runpod/results/phase0_rho_fpocket_partial_aggregate.csv
+  [checkpoint] P0AG16 written
+
+=== AroK (P9WPY3) ===
+  Scoring reference: 2IYT_A.pdb
+  s_0: 175 residues, 41 pocket indices
+  s00 t=0.1  rho_pocket=0.276  rho_all=0.546
+  [fp] s00 t=0.1  rho_pocket=-0.080
+  s00 t=0.3  rho_pocket=0.447  rho_all=0.597
+  [fp] s00 t=0.3  rho_pocket=0.306
+  s00 t=0.5  rho_pocket=0.308  rho_all=0.478
+  [fp] s00 t=0.5  rho_pocket=0.046
+  s00 t=0.7  rho_pocket=0.108  rho_all=0.424
+  [fp] s00 t=0.7  rho_pocket=-0.117
+  s00 t=0.9  rho_pocket=0.148  rho_all=0.430
+  [fp] s00 t=0.9  rho_pocket=-0.093
+  s01 t=0.1  rho_pocket=0.486  rho_all=0.645
+  [fp] s01 t=0.1  rho_pocket=-0.080
+  s01 t=0.3  rho_pocket=0.445  rho_all=0.587
+  [fp] s01 t=0.3  rho_pocket=-0.076
+  s01 t=0.5  rho_pocket=0.275  rho_all=0.491
+  [fp] s01 t=0.5  rho_pocket=-0.125
+  s01 t=0.7  rho_pocket=0.137  rho_all=0.431
+  [fp] s01 t=0.7  rho_pocket=0.037
+  s01 t=0.9  rho_pocket=0.208  rho_all=0.468
+  [fp] s01 t=0.9  rho_pocket=-0.042
+  s02 t=0.1  rho_pocket=0.536  rho_all=0.566
+  [fp] s02 t=0.1  rho_pocket=-0.096
+  s02 t=0.3  rho_pocket=0.591  rho_all=0.577
+  [fp] s02 t=0.3  rho_pocket=-0.013
+  s02 t=0.5  rho_pocket=0.640  rho_all=0.516
+  [fp] s02 t=0.5  rho_pocket=-0.021
+  s02 t=0.7  rho_pocket=0.092  rho_all=0.425
+  [fp] s02 t=0.7  rho_pocket=0.076
+  s02 t=0.9  rho_pocket=0.264  rho_all=0.454
+  [fp] s02 t=0.9  rho_pocket=0.036
+  s03 t=0.1  rho_pocket=0.534  rho_all=0.594
+  [fp] s03 t=0.1  rho_pocket=-0.148
+  s03 t=0.3  rho_pocket=0.536  rho_all=0.619
+  [fp] s03 t=0.3  rho_pocket=0.106
+  s03 t=0.5  rho_pocket=0.184  rho_all=0.479
+  [fp] s03 t=0.5  rho_pocket=0.049
+  s03 t=0.7  rho_pocket=0.320  rho_all=0.389
+  [fp] s03 t=0.7  rho_pocket=-0.065
+  s03 t=0.9  rho_pocket=0.090  rho_all=0.408
+  [fp] s03 t=0.9  rho_pocket=0.134
+  s04 t=0.1  rho_pocket=0.392  rho_all=0.559
+  [fp] s04 t=0.1  rho_pocket=0.127
+  s04 t=0.3  rho_pocket=0.342  rho_all=0.552
+  [fp] s04 t=0.3  rho_pocket=0.077
+  s04 t=0.5  rho_pocket=0.380  rho_all=0.560
+  [fp] s04 t=0.5  rho_pocket=-0.044
+  s04 t=0.7  rho_pocket=0.218  rho_all=0.431
+  [fp] s04 t=0.7  rho_pocket=0.220
+  s04 t=0.9  rho_pocket=0.083  rho_all=0.424
+  [fp] s04 t=0.9  rho_pocket=0.126
+Results written to results/phase0_runpod/results/phase0_rho_partial.csv and results/phase0_runpod/results/phase0_rho_partial_aggregate.csv
+Results written to results/phase0_runpod/results/phase0_rho_fpocket_partial.csv and results/phase0_runpod/results/phase0_rho_fpocket_partial_aggregate.csv
+  [checkpoint] P9WPY3 written
+
+=== Factor VII (P08709) ===
+  Scoring reference: 1JBU_A.pdb
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM    308  N   LYS H  60       6.467   1.336  -9.422  1.00  0.00           N  , ATOM    307  OD2 ASP H  60       9.119  -2.491  -6.442  1.00  0.00           O  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM    317  N   ILE H  60       5.182   3.361 -11.829  1.00  0.00           N  , ATOM    316  NZ  LYS H  60       5.036  -2.249  -5.917  1.00  0.00           N  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM    325  N   LYS H  60       3.230   5.862 -13.064  1.00  0.00           N  , ATOM    324  CD1 ILE H  60       9.124   5.058 -12.786  1.00  0.00           C  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM    334  N   ASN H  60       1.590   8.334 -14.769  1.00  0.00           N  , ATOM    333  NZ  LYS H  60      -3.457   5.725 -14.248  1.00  0.00           N  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM    877  N   GLU H 129      34.104  -1.999   4.689  1.00  0.00           N  , ATOM    876  OG  SER H 129      31.253   0.468   4.190  1.00  0.00           O  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM    886  N   ARG H 129      36.036  -3.107   6.465  1.00  0.00           N  , ATOM    885  OE2 GLU H 129      33.371  -5.389   0.618  1.00  0.00           O  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM    897  N   THR H 129      36.104  -1.401   8.677  1.00  0.00           N  , ATOM    896  NH2 ARG H 129      42.689  -3.139   4.284  1.00  0.00           N  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM    904  N   LEU H 129      33.737   0.393   9.130  1.00  0.00           N  , ATOM    903  CG2 THR H 129      36.480   1.689  10.861  1.00  0.00           C  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM    912  N   ALA H 129      31.647  -1.503   8.972  1.00  0.00           N  , ATOM    911  CD2 LEU H 129      32.655   3.839   8.891  1.00  0.00           C  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM    917  N   PHE H 129      31.723  -2.715  11.431  1.00  0.00           N  , ATOM    916  CB  ALA H 129      31.197  -3.795   8.209  1.00  0.00           C  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM    928  N   VAL H 129      30.880  -0.965  13.407  1.00  0.00           N  , ATOM    927  CZ  PHE H 129      34.211  -7.026  10.660  1.00  0.00           C  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM   1167  N   SER H 170      11.973 -11.222   5.106  1.00  0.00           N  , ATOM   1166  NE2 GLN H 170      10.684 -10.595  11.205  1.00  0.00           N  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM   1173  N   ARG H 170      12.721 -12.866   3.073  1.00  0.00           N  , ATOM   1172  OG  SER H 170      13.150  -8.590   4.642  1.00  0.00           O  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM   1195  N   LYS H 170      11.827 -14.864   0.153  1.00  0.00           N  , ATOM   1193  NH2 ARG H 170      15.367 -17.572  -0.899  1.00  0.00           N  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM   1204  N   VAL H 170      10.367 -17.251  -2.053  1.00  0.00           N  , ATOM   1203  NZ  LYS H 170      10.629 -13.143  -4.772  1.00  0.00           N  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM   1211  N   GLY H 170      11.996 -18.277  -5.046  1.00  0.00           N  , ATOM   1210  CG2 VAL H 170       8.291 -18.901  -3.309  1.00  0.00           C  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM   1215  N   ASP H 170      13.385 -15.924  -5.425  1.00  0.00           N  , ATOM   1214  O   GLY H 170      12.965 -15.936  -7.634  1.00  0.00           O  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM   1223  N   SER H 170      16.097 -13.533  -6.032  1.00  0.00           N  , ATOM   1222  OD2 ASP H 170      15.057 -15.376  -3.006  1.00  0.00           O  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM   1229  N   PRO H 170      19.557 -14.636  -5.708  1.00  0.00           N  , ATOM   1228  OG  SER H 170      19.201 -11.696  -6.812  1.00  0.00           O  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM   1314  N   TYR H 184      14.728  -2.484  15.062  1.00  0.00           N  , ATOM   1313  O   GLY H 184      15.967  -4.080  14.081  1.00  0.00           O  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM   1350  N   LYS H 188       3.942   3.457  11.214  1.00  0.00           N  , ATOM   1349  OG  SER H 188       0.894   0.888  11.161  1.00  0.00           O  )
+  warnings.warn(
+/workspace/cryptic-pocket-phd/.venv/lib/python3.11/site-packages/mdtraj/formats/pdb/pdbstructure.py:687: UserWarning: WARNING: two consecutive residues with same number (ATOM   1606  N   THR H 221       2.634  -3.557   9.783  1.00  0.00           N  , ATOM   1605  CB  ALA H 221       4.809  -3.858   7.638  1.00  0.00           C  )
+  warnings.warn(
+  SKIP P08709: apo PM scoring failed: cannot reshape array of size 2868 into shape (238,4,3)
+
+=== Tie-2 (Q02763) ===
+  Scoring reference: 1FVR_A.pdb
+  s_0: 299 residues, 42 pocket indices
+  s00 t=0.1  rho_pocket=0.087  rho_all=0.180
+  [fp] s00 t=0.1  rho_pocket=-0.136
+  s00 t=0.3  rho_pocket=0.007  rho_all=0.164
+  [fp] s00 t=0.3  rho_pocket=-0.195
+  s00 t=0.5  rho_pocket=0.176  rho_all=-0.001
+  [fp] s00 t=0.5  rho_pocket=-0.169
+  s00 t=0.7  rho_pocket=0.417  rho_all=0.129
+  [fp] s00 t=0.7  rho_pocket=-0.168
+  s00 t=0.9  rho_pocket=0.160  rho_all=0.080
+  [fp] s00 t=0.9  rho_pocket=-0.168
+  s01 t=0.1  rho_pocket=0.169  rho_all=0.303
+  [fp] s01 t=0.1  rho_pocket=0.251
+  s01 t=0.3  rho_pocket=0.071  rho_all=0.274
+  [fp] s01 t=0.3  rho_pocket=-0.229
+  s01 t=0.5  rho_pocket=0.146  rho_all=0.093
+  [fp] s01 t=0.5  rho_pocket=0.240
+  s01 t=0.7  rho_pocket=0.021  rho_all=-0.084
+  [fp] s01 t=0.7  rho_pocket=-0.142
+  s01 t=0.9  rho_pocket=0.080  rho_all=0.058
+  [fp] s01 t=0.9  rho_pocket=-0.128
+  s02 t=0.1  rho_pocket=0.094  rho_all=0.126
+  [fp] s02 t=0.1  rho_pocket=-0.149
+  s02 t=0.3  rho_pocket=0.138  rho_all=0.081
+  [fp] s02 t=0.3  rho_pocket=0.041
+  s02 t=0.5  rho_pocket=0.191  rho_all=0.180
+  [fp] s02 t=0.5  rho_pocket=-0.356
+  s02 t=0.7  rho_pocket=0.020  rho_all=0.108
+  [fp] s02 t=0.7  rho_pocket=-0.088
+  s02 t=0.9  rho_pocket=0.160  rho_all=-0.078
+  [fp] s02 t=0.9  rho_pocket=-0.059
+  s03 t=0.1  rho_pocket=0.032  rho_all=0.074
+  [fp] s03 t=0.1  rho_pocket=0.214
+  s03 t=0.3  rho_pocket=0.347  rho_all=0.097
+  [fp] s03 t=0.3  rho_pocket=0.074
+  s03 t=0.5  rho_pocket=0.114  rho_all=-0.014
+  [fp] s03 t=0.5  rho_pocket=-0.009
+  s03 t=0.7  rho_pocket=-0.274  rho_all=-0.009
+  [fp] s03 t=0.7  rho_pocket=-0.319
+  s03 t=0.9  rho_pocket=-0.423  rho_all=-0.054
+  [fp] s03 t=0.9  rho_pocket=0.012
+  s04 t=0.1  rho_pocket=0.015  rho_all=0.142
+  [fp] s04 t=0.1  rho_pocket=0.067
+  s04 t=0.3  rho_pocket=0.055  rho_all=0.082
+  [fp] s04 t=0.3  rho_pocket=0.107
+  s04 t=0.5  rho_pocket=0.102  rho_all=0.120
+  [fp] s04 t=0.5  rho_pocket=0.171
+  s04 t=0.7  rho_pocket=0.141  rho_all=0.028
+  [fp] s04 t=0.7  rho_pocket=-0.188
+  s04 t=0.9  rho_pocket=0.174  rho_all=0.010
+  [fp] s04 t=0.9  rho_pocket=-0.138
+Results written to results/phase0_runpod/results/phase0_rho_partial.csv and results/phase0_runpod/results/phase0_rho_partial_aggregate.csv
+Results written to results/phase0_runpod/results/phase0_rho_fpocket_partial.csv and results/phase0_runpod/results/phase0_rho_fpocket_partial_aggregate.csv
+  [checkpoint] Q02763 written
+
+=== RhoA (P61586) ===
+  Scoring reference: 1XCG_B.pdb
+  s_0: 178 residues, 37 pocket indices
+  s00 t=0.1  rho_pocket=0.564  rho_all=0.667
+  [fp] s00 t=0.1  rho_pocket=0.138
+  s00 t=0.3  rho_pocket=0.618  rho_all=0.750
+  [fp] s00 t=0.3  rho_pocket=-0.027
+  s00 t=0.5  rho_pocket=0.386  rho_all=0.677
+  [fp] s00 t=0.5  rho_pocket=-0.297
+  s00 t=0.7  rho_pocket=0.286  rho_all=0.566
+  [fp] s00 t=0.7  rho_pocket=0.120
+  s00 t=0.9  rho_pocket=0.606  rho_all=0.577
+  [fp] s00 t=0.9  rho_pocket=0.040
+  s01 t=0.1  rho_pocket=0.568  rho_all=0.742
+  [fp] s01 t=0.1  rho_pocket=0.200
+  s01 t=0.3  rho_pocket=0.455  rho_all=0.763
+  [fp] s01 t=0.3  rho_pocket=-0.047
+  s01 t=0.5  rho_pocket=0.557  rho_all=0.734
+  [fp] s01 t=0.5  rho_pocket=0.235
+  s01 t=0.7  rho_pocket=0.415  rho_all=0.557
+  [fp] s01 t=0.7  rho_pocket=0.003
+  s01 t=0.9  rho_pocket=0.520  rho_all=0.585
+  [fp] s01 t=0.9  rho_pocket=0.168
+  s02 t=0.1  rho_pocket=0.780  rho_all=0.816
+  [fp] s02 t=0.1  rho_pocket=0.271
+  s02 t=0.3  rho_pocket=0.526  rho_all=0.738
+  [fp] s02 t=0.3  rho_pocket=-0.088
+  s02 t=0.5  rho_pocket=0.449  rho_all=0.656
+  [fp] s02 t=0.5  rho_pocket=0.253
+  s02 t=0.7  rho_pocket=0.539  rho_all=0.580
+  [fp] s02 t=0.7  rho_pocket=0.213
+  s02 t=0.9  rho_pocket=0.409  rho_all=0.539
+  [fp] s02 t=0.9  rho_pocket=-0.045
+  s03 t=0.1  rho_pocket=0.646  rho_all=0.739
+  [fp] s03 t=0.1  rho_pocket=0.096
+  s03 t=0.3  rho_pocket=0.435  rho_all=0.654
+  [fp] s03 t=0.3  rho_pocket=0.367
+  s03 t=0.5  rho_pocket=0.554  rho_all=0.674
+  [fp] s03 t=0.5  rho_pocket=-0.198
+  s03 t=0.7  rho_pocket=0.443  rho_all=0.549
+  [fp] s03 t=0.7  rho_pocket=-0.088
+  s03 t=0.9  rho_pocket=0.272  rho_all=0.542
+  [fp] s03 t=0.9  rho_pocket=-0.034
+  s04 t=0.1  rho_pocket=0.511  rho_all=0.761
+  [fp] s04 t=0.1  rho_pocket=0.003
+  s04 t=0.3  rho_pocket=0.519  rho_all=0.742
+  [fp] s04 t=0.3  rho_pocket=0.111
+  s04 t=0.5  rho_pocket=0.554  rho_all=0.665
+  [fp] s04 t=0.5  rho_pocket=0.124
+  s04 t=0.7  rho_pocket=0.589  rho_all=0.595
+  [fp] s04 t=0.7  rho_pocket=0.357
+  s04 t=0.9  rho_pocket=0.553  rho_all=0.631
+  [fp] s04 t=0.9  rho_pocket=-0.005
+Results written to results/phase0_runpod/results/phase0_rho_partial.csv and results/phase0_runpod/results/phase0_rho_partial_aggregate.csv
+Results written to results/phase0_runpod/results/phase0_rho_fpocket_partial.csv and results/phase0_runpod/results/phase0_rho_fpocket_partial_aggregate.csv
+  [checkpoint] P61586 written
+
+=== Building final results table ===
+Results written to results/phase0_runpod/results/phase0_rho.csv and results/phase0_runpod/results/phase0_rho_aggregate.csv
+Results written to results/phase0_runpod/results/phase0_rho_fpocket.csv and results/phase0_runpod/results/phase0_rho_fpocket_aggregate.csv
+
+--- fpocket Aggregate rho_pocket (mean [95% CI]) ---
+  t=0.1: 0.029 [-0.045, 0.102]
+  t=0.3: -0.008 [-0.066, 0.044]
+  t=0.5: -0.028 [-0.055, -0.000]
+  t=0.7: 0.010 [-0.066, 0.080]
+  t=0.9: 0.003 [-0.057, 0.057]
+
+--- PocketMiner Aggregate rho_pocket (mean [95% CI]) ---
+  t=0.1: 0.360 [0.239, 0.486]
+  t=0.3: 0.386 [0.296, 0.470]
+  t=0.5: 0.312 [0.223, 0.399]
+  t=0.7: 0.263 [0.165, 0.359]
+  t=0.9: 0.261 [0.152, 0.363]
+
+Phase 2 complete.

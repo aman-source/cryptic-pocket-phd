@@ -171,13 +171,8 @@ def run_phase0_boltz(
         template_dir=None,
         extra_mols_dir=None,
     )
-    data_module = BoltzInferenceDataModule(
-        manifest=processed.manifest,
-        target_dir=processed.targets_dir,
-        msa_dir=processed.msa_dir,
-        num_workers=0,
-        constraints_dir=processed.constraints_dir,
-    )
+    # Map uid → manifest record for per-protein filtering
+    record_by_uid = {r.id: r for r in filtered_manifest.records}
 
     # ------------------------------------------------------------------
     # Load Boltz1 model
@@ -189,8 +184,8 @@ def run_phase0_boltz(
     predict_args = {
         "recycling_steps": recycling_steps,
         "sampling_steps": sampling_steps,
-        "diffusion_samples": n_samples,
-        "max_parallel_samples": n_samples,
+        "diffusion_samples": 1,
+        "max_parallel_samples": 1,
         "write_confidence_summary": True,
         "write_full_pae": False,
         "write_full_pde": False,
@@ -244,8 +239,20 @@ def run_phase0_boltz(
         atom_metadata = atom_metadata_from_sequence(seq, chain_id="A")
         n_residues = len(seq)
 
+        # Single-protein manifest: one predict call = one protein = one sample
+        single_manifest = Manifest(records=[record_by_uid[uid]])
+
         for sample_idx in range(n_samples):
             print(f"  Sample {sample_idx + 1}/{n_samples}")
+
+            # Fresh data module per sample so DataLoader state resets
+            data_module = BoltzInferenceDataModule(
+                manifest=single_manifest,
+                target_dir=processed.targets_dir,
+                msa_dir=processed.msa_dir,
+                num_workers=0,
+                constraints_dir=processed.constraints_dir,
+            )
 
             capture_fn = make_timestep_capture_fn(
                 target_ts=timesteps,

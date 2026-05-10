@@ -104,6 +104,10 @@ def run_phase0_pocketminer(out_dir: Path, proteins: list | None = None) -> dict:
     for row in manifest_rows:
         by_protein[row["uniprot"]].append(row)
 
+    # Filter to requested proteins only
+    if protein_map:
+        by_protein = {uid: rows for uid, rows in by_protein.items() if uid in protein_map}
+
     all_results: dict = {}
     all_fpocket_results: dict = {}
 
@@ -118,8 +122,16 @@ def run_phase0_pocketminer(out_dir: Path, proteins: list | None = None) -> dict:
 
         print(f"\n=== {short} ({uid}) ===")
         print(f"  Scoring reference: {Path(apo_pdb).name}")
-        s_0 = pm_score(apo_pdb)
-        s_0_fp = fpocket_score(apo_pdb)
+        try:
+            s_0 = pm_score(apo_pdb)
+        except Exception as exc:
+            print(f"  SKIP {uid}: apo PM scoring failed: {exc}")
+            continue
+        try:
+            s_0_fp = fpocket_score(apo_pdb)
+        except Exception as exc:
+            print(f"  WARNING: apo fpocket failed ({exc}), skipping fpocket for {uid}")
+            s_0_fp = None
         print(f"  s_0: {len(s_0)} residues, {len(pocket_idx)} pocket indices")
 
         prot_results: dict = {}
@@ -153,21 +165,22 @@ def run_phase0_pocketminer(out_dir: Path, proteins: list | None = None) -> dict:
             prot_results[t][sample_idx] = (rho_p, rho_all)
 
             # fpocket score
-            try:
-                s_t_fp = fpocket_score(pdb_path)
-            except Exception as exc:
-                print(f"  fpocket WARNING s{sample_idx:02d} t={t:.1f}: {exc}")
-                continue
+            if s_0_fp is not None:
+                try:
+                    s_t_fp = fpocket_score(pdb_path)
+                except Exception as exc:
+                    print(f"  fpocket WARNING s{sample_idx:02d} t={t:.1f}: {exc}")
+                    continue
 
-            if len(s_t_fp) != n_residues:
-                continue
+                if len(s_t_fp) != n_residues:
+                    continue
 
-            rho_p_fp, rho_all_fp = compute_rho(s_t_fp, s_0_fp, pocket_idx)
-            print(f"  [fp] s{sample_idx:02d} t={t:.1f}  rho_pocket={rho_p_fp:.3f}")
+                rho_p_fp, rho_all_fp = compute_rho(s_t_fp, s_0_fp, pocket_idx)
+                print(f"  [fp] s{sample_idx:02d} t={t:.1f}  rho_pocket={rho_p_fp:.3f}")
 
-            if t not in fpocket_prot_results:
-                fpocket_prot_results[t] = {}
-            fpocket_prot_results[t][sample_idx] = (rho_p_fp, rho_all_fp)
+                if t not in fpocket_prot_results:
+                    fpocket_prot_results[t] = {}
+                fpocket_prot_results[t][sample_idx] = (rho_p_fp, rho_all_fp)
 
         all_results[uid] = prot_results
         all_fpocket_results[uid] = fpocket_prot_results
