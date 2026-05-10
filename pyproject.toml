@@ -2,7 +2,7 @@
 name = "cryptic-pocket-phd"
 version = "0.1.0"
 description = "PocketMiner-guided diffusion for cryptic pockets"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 
 dependencies = [
     "numpy",
