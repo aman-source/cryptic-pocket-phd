@@ -80,17 +80,17 @@ def _is_windows() -> bool:
 def _run_fpocket_native(pdb_path: str, out_dir: str) -> Path:
     """Run fpocket natively (Linux/Mac).  Returns path to *_out.pdb."""
     cmd = _get_fpocket_cmd()
-    pdb_path = str(pdb_path)
+    pdb_path = Path(pdb_path).resolve()  # absolute — safe with cwd change
     result = subprocess.run(
-        cmd + ["-f", pdb_path],
+        cmd + ["-f", pdb_path.name],     # just filename; cwd = parent dir
         capture_output=True,
         text=True,
-        cwd=str(Path(pdb_path).parent),
+        cwd=str(pdb_path.parent),
     )
     if result.returncode != 0:
         raise RuntimeError(f"fpocket failed:\n{result.stderr}")
-    stem = Path(pdb_path).stem
-    out_pdb = Path(pdb_path).parent / f"{stem}_out" / f"{stem}_out.pdb"
+    stem = pdb_path.stem
+    out_pdb = pdb_path.parent / f"{stem}_out" / f"{stem}_out.pdb"
     return out_pdb
 
 
