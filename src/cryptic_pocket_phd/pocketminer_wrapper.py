@@ -68,18 +68,20 @@ def _load_model():
     """Instantiate MQAModel and restore PocketMiner weights."""
     _ensure_pm_on_path()
 
-    # TF initializes CUDA context during `import tensorflow`, so we must hide CUDA
-    # BEFORE the import. PyTorch CUDA must be initialized before this point (caller's
-    # responsibility — see run_phase0.py). After TF init, we restore the env var so
-    # PyTorch can continue using the GPU normally.
-    _orig = os.environ.get("CUDA_VISIBLE_DEVICES")
-    os.environ["CUDA_VISIBLE_DEVICES"] = ""  # hide GPU from TF
+    # TF 2.18/XLA bypasses CUDA_VISIBLE_DEVICES and pre-allocates ~80 GiB on first
+    # import, leaving no memory for PyTorch/Boltz. Two-part mitigation:
+    #   1. TF_FORCE_GPU_ALLOW_GROWTH: disables pre-allocation (read at TF startup).
+    #   2. set_memory_growth per device: belt-and-suspenders for older TF code paths.
+    #   3. tf.device('/CPU:0'): forces all PocketMiner computation to CPU, so TF
+    #      never needs GPU memory regardless of what it initialised.
+    os.environ.setdefault("TF_FORCE_GPU_ALLOW_GROWTH", "true")
     import tensorflow as tf
-    # Restore so PyTorch/other code can still see the GPU
-    if _orig is not None:
-        os.environ["CUDA_VISIBLE_DEVICES"] = _orig
-    else:
-        os.environ.pop("CUDA_VISIBLE_DEVICES", None)
+    for _gpu in tf.config.list_physical_devices("GPU"):
+        try:
+            tf.config.experimental.set_memory_growth(_gpu, True)
+        except RuntimeError:
+            pass  # already initialised — best-effort
+
     from models import MQAModel  # noqa: PL — PocketMiner's models.py
     from util import load_checkpoint  # noqa: PL — PocketMiner's util.py
 
@@ -90,16 +92,17 @@ def _load_model():
             "external/pocketminer"
         )
 
-    model = MQAModel(
-        node_features=(8, 50),
-        edge_features=(1, 32),
-        hidden_dim=(16, _HIDDEN_DIM),
-        num_layers=_NUM_LAYERS,
-        dropout=_DROPOUT_RATE,
-    )
-    # Use legacy optimizer — required to restore TF 2.x checkpoints in TF 2.11+.
-    opt = tf.keras.optimizers.legacy.Adam()
-    load_checkpoint(model, opt, str(_MODEL_CHECKPOINT))
+    with tf.device("/CPU:0"):
+        model = MQAModel(
+            node_features=(8, 50),
+            edge_features=(1, 32),
+            hidden_dim=(16, _HIDDEN_DIM),
+            num_layers=_NUM_LAYERS,
+            dropout=_DROPOUT_RATE,
+        )
+        # Use legacy optimizer — required to restore TF 2.x checkpoints in TF 2.11+.
+        opt = tf.keras.optimizers.legacy.Adam()
+        load_checkpoint(model, opt, str(_MODEL_CHECKPOINT))
     return model
 
 
@@ -156,7 +159,9 @@ def score(
         X, S, mask = process_strucs([traj])
 
     m = model if model is not None else get_model()
-    preds = m(X, S, mask, train=False, res_level=True)  # [1, L_max]
+    import tensorflow as tf
+    with tf.device("/CPU:0"):
+        preds = m(X, S, mask, train=False, res_level=True)  # [1, L_max]
 
     # Support both TF Tensors (.numpy()) and plain numpy arrays (unit tests).
     preds_np = preds.numpy() if hasattr(preds, "numpy") else np.asarray(preds)
