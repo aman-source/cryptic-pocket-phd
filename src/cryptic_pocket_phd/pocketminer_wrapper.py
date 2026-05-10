@@ -68,10 +68,18 @@ def _load_model():
     """Instantiate MQAModel and restore PocketMiner weights."""
     _ensure_pm_on_path()
 
+    # TF initializes CUDA context during `import tensorflow`, so we must hide CUDA
+    # BEFORE the import. PyTorch CUDA must be initialized before this point (caller's
+    # responsibility — see run_phase0.py). After TF init, we restore the env var so
+    # PyTorch can continue using the GPU normally.
+    _orig = os.environ.get("CUDA_VISIBLE_DEVICES")
+    os.environ["CUDA_VISIBLE_DEVICES"] = ""  # hide GPU from TF
     import tensorflow as tf
-    # Restrict TF to CPU — leaves all GPU memory for PyTorch/Boltz.
-    # Must be called before any TF GPU op. PocketMiner GVP is small; CPU adds <1s.
-    tf.config.set_visible_devices([], "GPU")
+    # Restore so PyTorch/other code can still see the GPU
+    if _orig is not None:
+        os.environ["CUDA_VISIBLE_DEVICES"] = _orig
+    else:
+        os.environ.pop("CUDA_VISIBLE_DEVICES", None)
     from models import MQAModel  # noqa: PL — PocketMiner's models.py
     from util import load_checkpoint  # noqa: PL — PocketMiner's util.py
 

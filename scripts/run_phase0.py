@@ -285,6 +285,13 @@ def run_phase0(
     # Set TF env var before any TF import (PocketMiner needs legacy Keras)
     os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
 
+    # Force PyTorch CUDA init NOW — before pocketminer_wrapper temporarily hides
+    # CUDA_VISIBLE_DEVICES to prevent TF from grabbing GPU memory.
+    # PyTorch reads CUDA_VISIBLE_DEVICES only at cuInit(); hiding it afterwards is safe.
+    import torch
+    if torch.cuda.is_available():
+        torch.cuda.init()
+
     # Resolve cache
     if cache_dir is None:
         env_cache = os.environ.get("BOLTZ_CACHE")
