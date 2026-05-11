@@ -29,53 +29,75 @@ from .pocketminer_torch import (
 )
 
 
-def _extract_calpha_and_sequence(
+def _extract_backbone(
     x_all_atom: torch.Tensor,
-    token_to_rep_atom: torch.Tensor,
-    atom_to_token: torch.Tensor,
+    bb_atom_indices: torch.Tensor,
     seq_indices: torch.Tensor,
     n_tokens: int,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    """Extract Calpha positions, sequence, and mask from Boltz all-atom coords.
+    """Extract real N/CA/C/O backbone from Boltz all-atom coordinates.
+
+    Boltz stores atoms per residue in CCD order: N(0), CA(1), C(2), O(3), ...
+    bb_atom_indices provides the global atom indices for these 4 atoms per residue.
 
     Args:
         x_all_atom: [P, N_atoms, 3] all-atom coords, requires_grad
-        token_to_rep_atom: [N_tokens, N_atoms] one-hot, maps token -> rep atom
-        atom_to_token: [N_atoms, N_tokens] one-hot, maps atom -> token
-        seq_indices: [N_tokens] amino acid type indices (0-19)
+        bb_atom_indices: [N_tokens_padded, 4] global atom indices for N/CA/C/O
+            per residue. Padding tokens should have index 0 (safe — masked out).
+        seq_indices: [N_tokens_padded] amino acid type indices (0-19)
         n_tokens: number of real (non-padding) tokens
 
     Returns:
-        X_bb: [P, N_tokens, 4, 3] backbone coords (N, CA, C, O format)
-              Only CA is real; N/C/O filled with CA offset for valid dihedrals
-        S: [P, N_tokens] sequence indices
-        mask: [P, N_tokens] 1 for real residues
+        X_bb: [P, N_tokens_padded, 4, 3] backbone coords
+        S: [P, N_tokens_padded] sequence indices
+        mask: [P, N_tokens_padded] 1 for real residues
     """
     P = x_all_atom.shape[0]
-    N_tokens_padded = token_to_rep_atom.shape[0]
+    N_tokens_padded = bb_atom_indices.shape[0]
 
-    # Get representative atom (Calpha) positions: [P, N_tokens, 3]
-    # token_to_rep_atom: [N_tokens, N_atoms] one-hot float
-    # x_all_atom: [P, N_atoms, 3]
-    ca_pos = torch.matmul(
-        token_to_rep_atom.float().unsqueeze(0).expand(P, -1, -1),
-        x_all_atom,
-    )  # [P, N_tokens, 3]
+    # Index backbone atoms: bb_atom_indices[t, k] is the global atom index
+    # for backbone atom k (0=N, 1=CA, 2=C, 3=O) of token t.
+    # x_all_atom[:, idx, :] preserves autograd.
+    bb_flat = bb_atom_indices.reshape(-1)  # [N_tokens_padded * 4]
+    X_bb = x_all_atom[:, bb_flat, :]  # [P, N_tokens_padded*4, 3]
+    X_bb = X_bb.reshape(P, N_tokens_padded, 4, 3)  # [P, N_tokens_padded, 4, 3]
 
-    # Build pseudo-backbone: PocketMiner needs [B, N, 4, 3] for N, CA, C, O
-    # We only have CA. Create pseudo-backbone by small offsets for valid dihedrals.
-    # This is the same approach used in Phase 0's boltz_coords_to_pdb.
-    N_pos = ca_pos + torch.tensor([1.458, 0.0, 0.0], device=ca_pos.device)
-    C_pos = ca_pos + torch.tensor([-0.553, 1.419, 0.0], device=ca_pos.device)
-    O_pos = ca_pos + torch.tensor([-0.553, 2.163, 0.780], device=ca_pos.device)
-
-    X_bb = torch.stack([N_pos, ca_pos, C_pos, O_pos], dim=2)  # [P, N_tokens, 4, 3]
-
-    S = seq_indices.unsqueeze(0).expand(P, -1).long()  # [P, N_tokens]
+    S = seq_indices.unsqueeze(0).expand(P, -1).long()  # [P, N_tokens_padded]
     mask = torch.zeros(P, N_tokens_padded, device=x_all_atom.device)
     mask[:, :n_tokens] = 1.0
 
     return X_bb, S, mask
+
+
+def build_bb_atom_indices(atom_to_token: torch.Tensor, n_tokens: int) -> torch.Tensor:
+    """Build backbone atom index table from Boltz's atom_to_token mapping.
+
+    For each token (residue), finds the first 4 atoms belonging to it.
+    Boltz stores atoms in CCD order: N(0), CA(1), C(2), O(3) for proteins.
+
+    Args:
+        atom_to_token: [N_atoms, N_tokens] one-hot matrix
+        n_tokens: number of real tokens (non-padding)
+
+    Returns:
+        bb_indices: [N_tokens_padded, 4] int64 tensor of global atom indices
+    """
+    N_tokens_padded = atom_to_token.shape[1]
+    bb_indices = torch.zeros(N_tokens_padded, 4, dtype=torch.long)
+
+    # atom_to_token[a, t] = 1 means atom a belongs to token t
+    token_assignment = atom_to_token.argmax(dim=1)  # [N_atoms] -> token index
+
+    for t in range(n_tokens):
+        atom_ids = (token_assignment == t).nonzero(as_tuple=True)[0]
+        if len(atom_ids) >= 4:
+            bb_indices[t] = atom_ids[:4]  # N, CA, C, O
+        elif len(atom_ids) > 0:
+            # Fewer than 4 atoms (e.g., GLY with missing O) — pad with first atom
+            for k in range(4):
+                bb_indices[t, k] = atom_ids[min(k, len(atom_ids) - 1)]
+
+    return bb_indices
 
 
 class PocketPotential:
@@ -94,15 +116,21 @@ class PocketPotential:
         self,
         model: PocketMinerTorch,
         pocket_residue_indices: list[int],
-        token_to_rep_atom: torch.Tensor,
-        atom_to_token: torch.Tensor,
+        bb_atom_indices: torch.Tensor,
         seq_indices: torch.Tensor,
         n_tokens: int,
     ):
+        """
+        Args:
+            model: PyTorch PocketMiner model (eval mode)
+            pocket_residue_indices: 0-indexed residue indices for pocket region
+            bb_atom_indices: [N_tokens_padded, 4] global atom indices for N/CA/C/O
+            seq_indices: [N_tokens_padded] amino acid type indices (0-19)
+            n_tokens: number of real (non-padding) tokens
+        """
         self.model = model
         self.pocket_idx = torch.tensor(pocket_residue_indices, dtype=torch.long)
-        self.token_to_rep_atom = token_to_rep_atom
-        self.atom_to_token = atom_to_token
+        self.bb_atom_indices = bb_atom_indices
         self.seq_indices = seq_indices
         self.n_tokens = n_tokens
 
@@ -115,10 +143,9 @@ class PocketPotential:
         Returns:
             scores: [P, N_tokens] pocket probabilities in [0, 1]
         """
-        X_bb, S, mask = _extract_calpha_and_sequence(
+        X_bb, S, mask = _extract_backbone(
             x_all_atom,
-            self.token_to_rep_atom.to(x_all_atom.device),
-            self.atom_to_token.to(x_all_atom.device),
+            self.bb_atom_indices.to(x_all_atom.device),
             self.seq_indices.to(x_all_atom.device),
             self.n_tokens,
         )
@@ -267,7 +294,7 @@ def load_pocket_potential(
     model.eval()
     model.to(device)
 
-    # Extract sequence from PDB
+    # Extract backbone from PDB: each residue has N, CA, C, O as atoms 0-3
     traj = md.load(pdb_path)
     prot_iis = traj.top.select("protein and (name N or name CA or name C or name O)")
     prot_bb = traj.atom_slice(prot_iis)
@@ -276,18 +303,14 @@ def load_pocket_potential(
     seq = [r.name for r in prot_bb.top.residues]
     seq_indices = torch.tensor([AA_LOOKUP[ABBREV[a]] for a in seq], dtype=torch.long)
 
-    # Build fake atom_to_token and token_to_rep_atom for standalone testing
-    # In real pipeline, Boltz provides these. Here we treat each residue's
-    # CA as the only atom (simplification for testing).
-    N_atoms = n_res  # 1 atom per residue
-    token_to_rep_atom = torch.eye(n_res)  # [N_tokens, N_atoms] identity
-    atom_to_token = torch.eye(n_res)  # [N_atoms, N_tokens] identity
+    # For standalone testing: each residue has exactly 4 atoms (N, CA, C, O)
+    # after the backbone selection above. So bb_atom_indices[t] = [4t, 4t+1, 4t+2, 4t+3].
+    bb_atom_indices = torch.arange(n_res * 4).reshape(n_res, 4)
 
     return PocketPotential(
         model=model,
         pocket_residue_indices=pocket_residue_indices,
-        token_to_rep_atom=token_to_rep_atom,
-        atom_to_token=atom_to_token,
+        bb_atom_indices=bb_atom_indices,
         seq_indices=seq_indices,
         n_tokens=n_res,
     )
