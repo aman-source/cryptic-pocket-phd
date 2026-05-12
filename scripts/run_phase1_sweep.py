@@ -395,6 +395,15 @@ def run_single_config(
 
         # Extract metrics
         coords = sample_out["sample_atom_coords"].cpu()  # [n_samples, N_atoms, 3]
+
+        # Verify Boltz output coords are in Angstrom range (same scale as apo)
+        sample_range = float(coords[0].max() - coords[0].min())
+        click.echo(f"  [UNIT CHECK] Boltz sample coord range: {sample_range:.1f} Å")
+        if sample_range < 5.0:
+            click.echo(f"  [UNIT CHECK] FAIL: Boltz output range {sample_range:.2f} < 5 Å"
+                       f" — coords likely in nm, not Å!")
+            sys.exit(1)
+
         ess_trace = sample_out["ess_trace"].cpu().numpy()  # [n_steps]
 
         # Save ESS
