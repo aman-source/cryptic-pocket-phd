@@ -194,7 +194,7 @@ def _load_apo_masks_no_pymol(input_pdb: str):
     import mdtraj as md
     traj = md.load(input_pdb)
     prot_iis = traj.top.select("protein")
-    xyz = torch.from_numpy(traj.xyz[0, prot_iis]).float()  # [N_prot_atoms, 3]
+    xyz = torch.from_numpy(traj.xyz[0, prot_iis]).float() * 10.0  # nm -> Angstroms
     mask = torch.ones(xyz.shape[0])
     return xyz, mask, mask  # untwisted_coords, region_mask, twisting_mask
 

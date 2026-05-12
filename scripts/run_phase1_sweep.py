@@ -129,11 +129,15 @@ def prepare_fasta(protein, out_dir):
 
 
 def load_apo_masks(apo_pdb_path):
-    """Load apo coordinates and build alignment mask (all protein atoms)."""
+    """Load apo coordinates and build alignment mask (all protein atoms).
+
+    Returns coordinates in Angstroms (Boltz's native unit).
+    mdtraj loads in nanometers, so we multiply by 10.
+    """
     import mdtraj as md
     traj = md.load(str(apo_pdb_path))
     prot_iis = traj.top.select("protein")
-    xyz = torch.from_numpy(traj.xyz[0, prot_iis]).float()
+    xyz = torch.from_numpy(traj.xyz[0, prot_iis]).float() * 10.0  # nm -> Angstroms
     mask = torch.ones(xyz.shape[0])
     return xyz, mask
 
@@ -369,8 +373,9 @@ def run_single_config(
             try:
                 holo_traj = md.load(str(holo_pdb_path))
                 apo_traj = md.load(str(apo_pdb_path))
-                holo_ca = holo_traj.xyz[0, holo_traj.top.select("protein and (name CA)")]
-                apo_ca = apo_traj.xyz[0, apo_traj.top.select("protein and (name CA)")]
+                # mdtraj returns nm; convert to Angstroms to match Boltz coords
+                holo_ca = holo_traj.xyz[0, holo_traj.top.select("protein and (name CA)")] * 10.0
+                apo_ca = apo_traj.xyz[0, apo_traj.top.select("protein and (name CA)")] * 10.0
                 n_min = min(len(holo_ca), len(apo_ca))
                 # Extract CA from samples
                 sample_cas = []
