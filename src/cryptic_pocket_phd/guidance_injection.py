@@ -58,9 +58,12 @@ def pocket_twist_fn(
                 (0, 0, 0, padded_atom_size - untwisted_coords.shape[0]),
                 value=0,
             ).to(device)
+            # Expand to match particle batch dim P
+            untwisted_expanded = untwisted_padded.unsqueeze(0).expand(P, -1, -1)
+            mask_expanded = twisting_mask_padded.unsqueeze(0).expand(P, -1)
             x0_hat_aligned = weighted_rigid_align_fn(
-                x0_hat, untwisted_padded, atom_mask,
-                twisting_mask_padded, keep_gradients=True,
+                x0_hat, untwisted_expanded, atom_mask,
+                mask_expanded, keep_gradients=True,
             )
         else:
             x0_hat_aligned = x0_hat
