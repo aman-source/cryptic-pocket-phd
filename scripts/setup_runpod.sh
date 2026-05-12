@@ -6,6 +6,19 @@ set -euo pipefail
 REPO=/workspace/cryptic-pocket-phd
 cd "$REPO"
 
+echo "=== Configuring git identity ==="
+git config user.email "aman@runpod"
+git config user.name "aman-runpod"
+# For checkpoint push: set GITHUB_PAT env var before running setup
+# Usage: GITHUB_PAT=ghp_xxx bash scripts/setup_runpod.sh
+if [ -n "${GITHUB_PAT:-}" ]; then
+  git remote set-url origin "https://aman-source:${GITHUB_PAT}@github.com/aman-source/cryptic-pocket-phd.git"
+  echo "Git push auth configured via PAT"
+else
+  echo "WARNING: No GITHUB_PAT set — checkpoint push will fail"
+  echo "Set it: export GITHUB_PAT=ghp_xxx"
+fi
+
 echo "=== Cloning ConforMix (if needed) ==="
 if [ ! -d "external/conformix/conformix_boltz" ]; then
   git clone https://github.com/drorlab/conformix.git external/conformix
