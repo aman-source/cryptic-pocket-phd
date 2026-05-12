@@ -237,8 +237,9 @@ def predict(
     # --- RMSD path: delegate to ConforMix directly if possible ---
     if bias_type == "rmsd" and _CONFORMIX_PREDICT is not None:
         click.echo("RMSD mode: delegating to ConforMix's predict() directly.")
-        ctx = click.Context(_CONFORMIX_PREDICT)
-        _CONFORMIX_PREDICT.invoke(ctx, data=data, input_cif=input_cif,
+        # Call ConforMix's predict.callback() with explicit kwargs
+        _CONFORMIX_PREDICT.callback(
+            data=data, input_cif=input_cif,
             out_dir=out_dir, twist_target_values=twist_target_values,
             twist_strength_values=twist_strength_values,
             tstart_step=tstart_step, tstop_step=tstop_step,
