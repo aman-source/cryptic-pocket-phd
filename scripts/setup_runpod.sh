@@ -6,6 +6,15 @@ set -euo pipefail
 REPO=/workspace/cryptic-pocket-phd
 cd "$REPO"
 
+echo "=== Cloning ConforMix (if needed) ==="
+if [ ! -d "external/conformix/conformix_boltz" ]; then
+  git clone https://github.com/drorlab/conformix.git external/conformix
+  cd external/conformix && git checkout d0fd34c && cd "$REPO"
+  echo "ConforMix cloned at d0fd34c"
+else
+  echo "ConforMix already present"
+fi
+
 echo "=== Installing deps ==="
 pip install -q -r requirements-runpod.txt 2>&1 | tail -5
 
