@@ -237,11 +237,15 @@ def predict(
     # --- RMSD path: delegate to ConforMix directly if possible ---
     if bias_type == "rmsd" and _CONFORMIX_PREDICT is not None:
         click.echo("RMSD mode: delegating to ConforMix's predict() directly.")
-        # Call ConforMix's predict.callback() with explicit kwargs
+        # Call ConforMix's predict.callback() with explicit kwargs.
+        # twist_target/strength_values must be lists of floats (Click's
+        # callback lambda normally parses the comma-separated string).
+        _tv = [float(x) for x in str(twist_target_values).split(",")]
+        _sv = [float(x) for x in str(twist_strength_values).split(",")]
         _CONFORMIX_PREDICT.callback(
             data=data, input_cif=input_cif,
-            out_dir=out_dir, twist_target_values=twist_target_values,
-            twist_strength_values=twist_strength_values,
+            out_dir=out_dir, twist_target_values=_tv,
+            twist_strength_values=_sv,
             tstart_step=tstart_step, tstop_step=tstop_step,
             ess_threshold=ess_threshold, diffusion_samples=diffusion_samples,
             cache=cache, checkpoint=checkpoint, devices=1,
