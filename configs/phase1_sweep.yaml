@@ -1,0 +1,53 @@
+# Phase 1 — β/α sweep configuration
+# Lock before running. Do not change mid-sweep.
+
+sweep:
+  n_samples: 50
+  sampling_steps: 200
+  recycling_steps: 3
+  seed: 42
+  ess_threshold: 0.333
+
+  pocket_p:
+    alpha: 15.0  # fixed for pocket_p
+    beta_values: [0.1, 0.3, 1.0, 3.0, 10.0]
+
+  pocket_t:
+    alpha: 10.0  # fixed for pocket_t
+    target_values: [0.3, 0.5, 0.7]
+
+proteins:
+  - uniprot: P62593
+    short_name: TEM-1
+    apo_pdb: 1JWP_A
+    holo_pdb: 1PZO_A
+    pocket_residues: "190-200,244-263"
+    rmsd_ref_to_ref: 2.5  # approximate
+
+  - uniprot: P61586
+    short_name: RhoA
+    apo_pdb: 1XCG_B
+    holo_pdb: 1OW3_B
+    pocket_residues: "12-48"
+    rmsd_ref_to_ref: 2.0  # approximate
+
+  - uniprot: P79345
+    short_name: NPC2
+    apo_pdb: 1NEP_A
+    holo_pdb: 2HKA_C
+    pocket_residues: "91-105"
+    rmsd_ref_to_ref: 1.08
+
+  - uniprot: P9WPY3
+    short_name: AroK
+    apo_pdb: 2IYT_A
+    holo_pdb: 2IYQ_A
+    pocket_residues: "100-140"
+    rmsd_ref_to_ref: 5.26
+
+  - uniprot: Q02763
+    short_name: Tie-2
+    apo_pdb: 1FVR_A
+    holo_pdb: 2OO8_A
+    pocket_residues: "10-33,164-181"
+    rmsd_ref_to_ref: 5.29
