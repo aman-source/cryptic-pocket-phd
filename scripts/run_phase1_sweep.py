@@ -510,8 +510,10 @@ def run_single_config(
               help="Override sampling_steps (for local testing)")
 @click.option("--proteins", type=str, default=None,
               help="Comma-separated short names to run (subset)")
+@click.option("--max_configs", type=int, default=None,
+              help="Limit to first N configs per protein (for smoke tests)")
 def main(config, out_dir, accelerator, cache, override_samples,
-         override_steps, proteins):
+         override_steps, proteins, max_configs):
     """Run Phase 1 β/α sweep."""
 
     with open(config) as f:
@@ -547,6 +549,10 @@ def main(config, out_dir, accelerator, cache, override_samples,
     for alpha in cfg["sweep"]["pocket_t"]["alpha_values"]:
         for target in cfg["sweep"]["pocket_t"]["target_values"]:
             configs.append(("pocket_t", target, alpha))
+
+    if max_configs is not None:
+        configs = configs[:max_configs]
+        click.echo(f"[SMOKE] Limited to first {max_configs} config(s)")
 
     total = len(protein_list) * len(configs)
     click.echo(f"Sweep: {len(protein_list)} proteins × {len(configs)} configs = {total} runs")
