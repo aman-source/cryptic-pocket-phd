@@ -27,6 +27,8 @@ import os
 import csv
 import time
 import json
+import subprocess
+import threading
 from pathlib import Path
 from dataclasses import asdict, dataclass
 
@@ -142,6 +144,80 @@ def load_apo_masks(apo_pdb_path):
     return xyz, mask
 
 
+def unit_sanity_check(protein_list):
+    """Assert apo PDB coords after nm->Å conversion are in Angstrom range.
+
+    mdtraj raw coords are nm (~0.1-2 range per axis).
+    After *10 they should be ~1-200 Å range (span > 5 Å).
+    Aborts with sys.exit(1) if assertion fails.
+    """
+    import mdtraj as md
+    protein = protein_list[0]
+    apo_path = REPO_ROOT / "data" / "validation_pdbs" / f"{protein['apo_pdb']}.pdb"
+    traj = md.load(str(apo_path))
+    xyz_nm = traj.xyz[0]
+    xyz_ang = xyz_nm * 10.0
+    coord_min = float(xyz_ang.min())
+    coord_max = float(xyz_ang.max())
+    coord_range = coord_max - coord_min
+    click.echo(f"[UNIT CHECK] {protein['apo_pdb']}: "
+               f"min={coord_min:.1f} max={coord_max:.1f} range={coord_range:.1f} Å")
+    if coord_range < 5.0:
+        click.echo(f"[UNIT CHECK] FAIL: range {coord_range:.2f} Å < 5 Å — "
+                   f"coords likely still in nm (forgot *10 fix?)")
+        sys.exit(1)
+    if coord_range > 1000.0:
+        click.echo(f"[UNIT CHECK] FAIL: range {coord_range:.2f} Å > 1000 Å — "
+                   f"something wrong with PDB")
+        sys.exit(1)
+    click.echo("[UNIT CHECK] PASS")
+
+
+def start_checkpoint_loop(out_dir, interval_sec=1200):
+    """Spawn background thread: git add/commit/push results every interval_sec."""
+    repo_root = REPO_ROOT
+
+    def _loop():
+        while True:
+            time.sleep(interval_sec)
+            try:
+                # Init LFS tracking for large array files (idempotent)
+                subprocess.run(
+                    ["git", "lfs", "track", "*.npy", "*.npz"],
+                    cwd=str(repo_root), capture_output=True, timeout=30,
+                )
+                subprocess.run(
+                    ["git", "add", ".gitattributes"],
+                    cwd=str(repo_root), capture_output=True, timeout=30,
+                )
+                subprocess.run(
+                    ["git", "add", "results/", "-A"],
+                    cwd=str(repo_root), capture_output=True, timeout=60,
+                )
+                commit_msg = (
+                    f"checkpoint: {time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}"
+                )
+                subprocess.run(
+                    ["git", "commit", "-m", commit_msg],
+                    cwd=str(repo_root), capture_output=True, timeout=30,
+                )
+                subprocess.run(
+                    ["git", "push", "origin", "master"],
+                    cwd=str(repo_root), capture_output=True, timeout=120,
+                )
+                click.echo(
+                    f"[CHECKPOINT] Pushed at "
+                    f"{time.strftime('%H:%M:%S UTC', time.gmtime())}"
+                )
+            except Exception as e:
+                click.echo(f"[CHECKPOINT] Push failed (non-fatal): {e}")
+
+    t = threading.Thread(target=_loop, daemon=True)
+    t.start()
+    click.echo(f"[CHECKPOINT] Background git-push loop started "
+               f"(every {interval_sec // 60} min)")
+
+
 def compute_coverage(sample_coords, holo_coords, apo_coords, threshold_frac=0.5):
     """Compute worst-matched coverage at threshold_frac * ref-to-ref RMSD.
 
@@ -179,11 +255,11 @@ def compute_coverage(sample_coords, holo_coords, apo_coords, threshold_frac=0.5)
 
 
 def run_single_config(
-    protein, bias_type, param_value, n_samples, sampling_steps,
+    protein, bias_type, param_value, alpha_val, n_samples, sampling_steps,
     seed, ess_threshold, accelerator, cache, out_dir,
     model_module, pm_model, device,
 ):
-    """Run one (protein, bias_type, param_value) config. Return metrics dict."""
+    """Run one (protein, bias_type, param_value, alpha_val) config. Return metrics dict."""
     import mdtraj as md
 
     uid = protein["uniprot"]
@@ -192,7 +268,10 @@ def run_single_config(
     pocket_str = protein["pocket_residues"]
     pocket_idx = parse_pocket_residues(pocket_str)
 
-    config_name = f"{bias_type}_{'beta' if bias_type == 'pocket_p' else 'target'}_{param_value}"
+    if bias_type == "pocket_p":
+        config_name = f"pocket_p_beta_{param_value}"
+    else:
+        config_name = f"pocket_t_alpha{int(alpha_val)}_target_{param_value}"
     config_dir = out_dir / uid / config_name
     config_dir.mkdir(parents=True, exist_ok=True)
 
@@ -232,13 +311,8 @@ def run_single_config(
         num_workers=0,
     )
 
-    # Get alpha/beta based on bias_type
-    if bias_type == "pocket_p":
-        alpha_val = 15.0
-        beta_val = param_value
-    else:
-        alpha_val = 10.0
-        beta_val = param_value  # target_t
+    # alpha_val comes from caller (sweep grid); param_value is beta (pocket_p) or target (pocket_t)
+    beta_val = param_value
 
     from pytorch_lightning import seed_everything
     seed_everything(seed)
@@ -392,6 +466,7 @@ def run_single_config(
             "protein": uid,
             "short_name": short,
             "bias_type": bias_type,
+            "alpha_val": alpha_val,
             "param_value": param_value,
             "n_samples": n_samples,
             "ess_min": ess_min,
@@ -452,12 +527,17 @@ def main(config, out_dir, accelerator, cache, override_samples,
             click.echo(f"No proteins match: {names}")
             return
 
-    # Build config grid
+    # Unit sanity check: confirm coords are in Angstroms after nm->Å conversion
+    unit_sanity_check(protein_list)
+
+    # Build config grid: (bias_type, param_value, alpha_val)
     configs = []
+    pocket_p_alpha = cfg["sweep"]["pocket_p"]["alpha"]
     for beta in cfg["sweep"]["pocket_p"]["beta_values"]:
-        configs.append(("pocket_p", beta))
-    for target in cfg["sweep"]["pocket_t"]["target_values"]:
-        configs.append(("pocket_t", target))
+        configs.append(("pocket_p", beta, pocket_p_alpha))
+    for alpha in cfg["sweep"]["pocket_t"]["alpha_values"]:
+        for target in cfg["sweep"]["pocket_t"]["target_values"]:
+            configs.append(("pocket_t", target, alpha))
 
     total = len(protein_list) * len(configs)
     click.echo(f"Sweep: {len(protein_list)} proteins × {len(configs)} configs = {total} runs")
@@ -495,10 +575,13 @@ def main(config, out_dir, accelerator, cache, override_samples,
     click.echo("Loading PocketMiner...")
     pm_model = load_pocketminer(str(device))
 
+    # Start background checkpoint loop (CLAUDE.md Rule 2)
+    start_checkpoint_loop(out_dir, interval_sec=1200)
+
     # CSV for aggregate results
     csv_path = out_dir / "phase1_sweep.csv"
     partial_csv = out_dir / "phase1_sweep_partial.csv"
-    fieldnames = ["protein", "short_name", "bias_type", "param_value",
+    fieldnames = ["protein", "short_name", "bias_type", "alpha_val", "param_value",
                   "n_samples", "ess_min", "ess_mean", "ess_final",
                   "rmsd_mean", "plddt_mean", "coverage", "elapsed_sec"]
 
@@ -506,15 +589,16 @@ def main(config, out_dir, accelerator, cache, override_samples,
     done = 0
 
     for protein in protein_list:
-        for bias_type, param_value in configs:
+        for bias_type, param_value, alpha_val in configs:
             done += 1
             click.echo(f"\n[{done}/{total}] {protein['short_name']} "
-                        f"{bias_type} param={param_value}")
+                        f"{bias_type} param={param_value} alpha={alpha_val}")
 
             metrics = run_single_config(
                 protein=protein,
                 bias_type=bias_type,
                 param_value=param_value,
+                alpha_val=alpha_val,
                 n_samples=n_samples,
                 sampling_steps=sampling_steps,
                 seed=seed,
