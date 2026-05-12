@@ -23,7 +23,7 @@ biopython>=1.80
 mdtraj>=1.9.9
 ihm>=2.0
 modelcif>=1.0
-pymol-open-source>=3.0
+pymol-open-source>=3.0.0a0
 pyparsing>=3.0
 
 # Data
