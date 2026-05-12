@@ -1,0 +1,30 @@
+# Pinned deps for RunPod A40 pods (Python 3.11, CUDA 12.x)
+# Install: pip install -r requirements-runpod.txt
+
+# Core ML
+torch>=2.1.0
+pytorch-lightning>=2.1.0
+einops>=0.7.0
+fairscale>=0.4.13
+
+# Boltz/ConforMix deps
+numpy==1.26.4
+scipy>=1.11.0
+click>=8.0
+tqdm>=4.60
+pandas>=2.0
+numba>=0.58
+mashumaro>=3.0
+omegaconf>=2.3
+
+# Chemistry
+rdkit==2024.9.6
+biopython>=1.80
+mdtraj>=1.9.9
+ihm>=2.0
+modelcif>=1.0
+pymol-open-source>=3.0
+pyparsing>=3.0
+
+# Data
+pyyaml>=6.0
