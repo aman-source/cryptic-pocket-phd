@@ -244,7 +244,7 @@ def run_single_config(
                  for k, v in batch.items()}
 
         with torch.no_grad(), torch.autocast(
-                device_type=device.type, dtype=torch.bfloat16 if device.type == "cuda" else torch.float32):
+                device_type=device.type, dtype=torch.float32):
             out = model_module(
                 batch, recycling_steps=3,
                 num_sampling_steps=sampling_steps, diffusion_samples=1,
@@ -301,7 +301,7 @@ def run_single_config(
         t0 = time.time()
         try:
             with torch.no_grad(), torch.autocast(
-                    device_type=device.type, dtype=torch.bfloat16 if device.type == "cuda" else torch.float32):
+                    device_type=device.type, dtype=torch.float32):
                 sample_out = model_module.structure_module.sample_twisted(
                     **sample_inputs, twist_fn=twist_fn_,
                     ess_threshold=ess_threshold)
