@@ -1,28 +1,30 @@
 """Phase 1 runner: ConforMix twisted SMC with pluggable guidance.
 
-Reuses ConforMix's Boltz integration, SMC machinery, and confidence scoring.
-Replaces only the twist_fn with our pocket-guided version.
+For --bias_type=rmsd: delegates to ConforMix's predict() directly when
+possible (PyMOL available). Falls back to verbatim-copied RMSD twist_fn
+(from ConforMix d0fd34c:887-976) when PyMOL is unavailable.
 
-Bias types:
-  rmsd      — ConforMix's original RMSD guidance (regression baseline)
-  pocket_p  — PocketMiner sum-based (g_p)
-  pocket_t  — PocketMiner sweep-based (g_t)
+For --bias_type=pocket_p/pocket_t: uses our PocketMiner guidance.
 
 Usage:
-  python scripts/run_phase1.py predict <data_path> \
+  # RMSD baseline (ConforMix reproduction):
+  python scripts/run_phase1.py <data_path> \
     --input_cif <apo.cif> --out_dir <outdir> \
-    --bias_type pocket_p \
-    --pocket_residues "190-200,244-263" \
-    --twist_strength_values 15.0 \
-    --twist_target_values 1.0 \
-    --diffusion_samples 5
+    --bias_type rmsd --twist_target_values 5.0 \
+    --diffusion_samples 5 --accelerator cpu
+
+  # Pocket guidance:
+  python scripts/run_phase1.py <data_path> \
+    --input_cif <apo.cif> --out_dir <outdir> \
+    --bias_type pocket_p --pocket_residues "190-200,244-263" \
+    --twist_strength_values 15.0 --twist_target_values 1.0 \
+    --diffusion_samples 3 --accelerator cpu
 """
 
 import sys
 import os
 from pathlib import Path
 
-# Add ConforMix and our src to path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "external" / "conformix" / "conformix_boltz" / "src"))
 sys.path.insert(0, str(REPO_ROOT / "src"))
@@ -30,34 +32,67 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 import click
 import torch
 import numpy as np
-from pytorch_lightning import seed_everything
-
-from boltz.run_twisted import (
-    download,
-    check_inputs,
-    process_inputs,
-    BoltzProcessedInput,
-    BoltzDiffusionParams,
-    BoltzInferenceDataModule,
-    get_secondary_structure_region_masks,
-    get_residue_atoms_mask,
-    weighted_rigid_align,
-)
-from boltz.data.types import Manifest
-from boltz.data.write.writer import BoltzWriter
-from boltz.model.model import Boltz1
 from dataclasses import asdict
 from tqdm import tqdm
 import glob
-from typing import Union, List, Optional, Literal
+import pickle
+import urllib.request
+
+from boltz.data.module.inference import BoltzInferenceDataModule
+from boltz.data.types import Manifest
+from boltz.data.write.writer import BoltzWriter
+from boltz.model.model import Boltz1
+from boltz.model.loss.diffusion import weighted_rigid_align
+# Import utilities from run_untwisted (no PyMOL dependency)
+from boltz.run_untwisted import download, check_inputs, process_inputs
 
 from cryptic_pocket_phd.pocketminer_torch import PocketMinerTorch, AA_LOOKUP, ABBREV
 from cryptic_pocket_phd.pocket_potential import PocketPotential, build_bb_atom_indices
 from cryptic_pocket_phd.guidance_injection import pocket_twist_fn
 
 
+# BoltzProcessedInput and BoltzDiffusionParams are defined in run_twisted.py
+# but also used here. They're simple dataclasses — define locally to avoid
+# importing from the PyMOL-dependent run_twisted.py.
+from dataclasses import dataclass
+
+@dataclass
+class BoltzProcessedInput:
+    manifest: Manifest
+    targets_dir: Path
+    msa_dir: Path
+
+@dataclass
+class BoltzDiffusionParams:
+    gamma_0: float = 0.605
+    gamma_min: float = 1.107
+    noise_scale: float = 0.901
+    rho: float = 8
+    step_scale: float = 1.0
+    sigma_min: float = 0.0004
+    sigma_max: float = 160.0
+    sigma_data: float = 16.0
+    P_mean: float = -1.2
+    P_std: float = 1.5
+    coordinate_augmentation: bool = True
+    alignment_reverse_diff: bool = True
+    synchronize_sigmas: bool = True
+    use_inference_model_cache: bool = False
+
+# Attempt to import ConforMix's predict (requires PyMOL)
+_CONFORMIX_PREDICT = None
+_HAS_PYMOL = False
+try:
+    from boltz.run_twisted import predict as _conformix_predict_cmd
+    from boltz.run_twisted import get_secondary_structure_region_masks
+    _CONFORMIX_PREDICT = _conformix_predict_cmd
+    _HAS_PYMOL = True
+except ImportError:
+    pass
+
+
 def parse_pocket_residues(pocket_str: str) -> list[int]:
-    """Parse pocket residue string like '190-200,244-263' to list of ints."""
+    """Parse '190-200,244-263' to list of ints."""
     residues = []
     for part in pocket_str.split(","):
         part = part.strip()
@@ -70,7 +105,7 @@ def parse_pocket_residues(pocket_str: str) -> list[int]:
 
 
 def load_pocketminer_model(device: str = "cpu") -> PocketMinerTorch:
-    """Load PocketMiner PyTorch model from saved state dict."""
+    """Load PocketMiner PyTorch model."""
     weights_path = REPO_ROOT / "models" / "pocketminer_torch.pt"
     model = PocketMinerTorch()
     with torch.no_grad():
@@ -83,18 +118,98 @@ def load_pocketminer_model(device: str = "cpu") -> PocketMinerTorch:
     return model
 
 
+# ---------------------------------------------------------------------------
+# RMSD twist_fn: verbatim from ConforMix d0fd34c run_twisted.py:887-976
+# Used only when PyMOL is unavailable and we can't call ConforMix directly.
+# ---------------------------------------------------------------------------
+def _conformix_rmsd_twist_fn(
+    alpha, beta, tstart_step, tstop_step,
+    twisting_mask, untwisted_coords, device,
+):
+    """Verbatim copy of ConforMix's twist_fn (d0fd34c:887-976).
+
+    Captures twisting_mask and untwisted_coords the same way ConforMix does.
+    Only used as fallback when ConforMix's predict() isn't importable.
+    """
+    def inner_twist_fn(xt, x0_hat, return_grad=True, t=None, atom_mask=None):
+        # --- log_bias_potential_rmsd (d0fd34c:891-915) ---
+        padded_atom_size = x0_hat.shape[1]
+        twisting_mask_region = torch.nn.functional.pad(
+            twisting_mask,
+            (0, padded_atom_size - twisting_mask.shape[0]),
+            value=0
+        ).to(x0_hat.device)
+        untwisted_pos = torch.nn.functional.pad(
+            untwisted_coords,
+            (0, 0, 0, padded_atom_size - untwisted_coords.shape[0]),
+            value=0
+        ).to(x0_hat.device)
+        atom_pos_aligned = weighted_rigid_align(
+            x0_hat, untwisted_pos, atom_mask,
+            twisting_mask_region, keep_gradients=True)
+        mse_loss = ((atom_pos_aligned - untwisted_pos) ** 2).sum(dim=-1)
+        rmsd = torch.sqrt(
+            torch.sum(mse_loss * twisting_mask_region, dim=-1)
+            / torch.sum(twisting_mask_region, dim=-1)
+        )
+        log_potential_xt_batch = (rmsd - beta)**2
+
+        # convert to unnormalized probability (d0fd34c:942)
+        log_potential_xt_batch *= -1
+
+        if return_grad:
+            if t is not None and tstart_step >= t >= tstop_step:
+                grad_log_potential_xt_batch = torch.autograd.grad(
+                    log_potential_xt_batch,
+                    xt,
+                    grad_outputs=torch.ones_like(log_potential_xt_batch),
+                    create_graph=False,
+                    allow_unused=True,
+                )[0]
+            else:
+                grad_log_potential_xt_batch = torch.zeros_like(xt, device=xt.device)
+            # param for sweeping (d0fd34c:960-969)
+            if t:
+                if alpha > 0:
+                    factor = alpha
+                if alpha < 0:
+                    factor = np.abs(alpha) * 200 * (1 + np.cos(np.pi * (np.log(1 + 4 * (230 - t)) / np.log(10)))) / 2
+                if alpha == 0:
+                    factor = 0
+                grad_log_potential_xt_batch *= factor
+            return log_potential_xt_batch.to(device).detach(), grad_log_potential_xt_batch.to(device).detach()
+        else:
+            return log_potential_xt_batch.to(device).detach()
+
+    return inner_twist_fn
+
+
+def _load_apo_masks_no_pymol(input_pdb: str):
+    """Build twisting_mask and untwisted_coords from PDB without PyMOL.
+
+    Uses all protein atoms as the alignment mask (equivalent to
+    --twist_rmsd_full_sequence in ConforMix). For regression testing
+    with subset_residues, use PyMOL-enabled environment.
+    """
+    import mdtraj as md
+    traj = md.load(input_pdb)
+    prot_iis = traj.top.select("protein")
+    xyz = torch.from_numpy(traj.xyz[0, prot_iis]).float()  # [N_prot_atoms, 3]
+    mask = torch.ones(xyz.shape[0])
+    return xyz, mask, mask  # untwisted_coords, region_mask, twisting_mask
+
+
 @click.command()
 @click.argument("data", type=click.Path(exists=True))
-@click.option("--input_cif", type=click.Path(exists=True), required=True)
+@click.option("--input_cif", type=click.Path(exists=True), required=True,
+              help="Apo structure (PDB or CIF) for alignment reference.")
 @click.option("--out_dir", type=click.Path(exists=False), default="./")
 @click.option("--bias_type", type=click.Choice(["rmsd", "pocket_p", "pocket_t"]),
               default="rmsd")
 @click.option("--pocket_residues", type=str, default=None,
-              help="Pocket residue ranges, e.g. '190-200,244-263'. Required for pocket_p/pocket_t.")
-@click.option("--twist_target_values", default="1.0",
-              help="Comma-separated target values (RMSD targets or pocket strength).")
-@click.option("--twist_strength_values", default="15.0",
-              help="Comma-separated strength values (alpha).")
+              help="Pocket residue ranges, e.g. '190-200,244-263'.")
+@click.option("--twist_target_values", default="1.0")
+@click.option("--twist_strength_values", default="15.0")
 @click.option("--tstart_step", type=str, default="200")
 @click.option("--tstop_step", type=str, default="0")
 @click.option("--ess_threshold", type=float, default=1/3)
@@ -119,11 +234,37 @@ def predict(
 ):
     """Run ConforMix twisted SMC with pluggable guidance potential."""
 
+    # --- RMSD path: delegate to ConforMix directly if possible ---
+    if bias_type == "rmsd" and _CONFORMIX_PREDICT is not None:
+        click.echo("RMSD mode: delegating to ConforMix's predict() directly.")
+        ctx = click.Context(_CONFORMIX_PREDICT)
+        _CONFORMIX_PREDICT.invoke(ctx, data=data, input_cif=input_cif,
+            out_dir=out_dir, twist_target_values=twist_target_values,
+            twist_strength_values=twist_strength_values,
+            tstart_step=tstart_step, tstop_step=tstop_step,
+            ess_threshold=ess_threshold, diffusion_samples=diffusion_samples,
+            cache=cache, checkpoint=checkpoint, devices=1,
+            accelerator=accelerator, recycling_steps=recycling_steps,
+            sampling_steps=sampling_steps, write_full_pae=False,
+            write_full_pde=False, output_format=output_format,
+            num_workers=num_workers, override=False, seed=seed,
+            use_msa_server=False, msa_server_url="https://api.colabfold.com",
+            msa_pairing_strategy="greedy", subset_residues=subset_residues,
+            twist_rmsd_full_sequence=twist_rmsd_full_sequence,
+        )
+        return
+
+    if bias_type == "rmsd" and not _HAS_PYMOL:
+        click.echo("WARNING: PyMOL not available. Using verbatim-copied RMSD "
+                    "twist_fn (ConforMix d0fd34c:887-976) as fallback.")
+
     if bias_type in ("pocket_p", "pocket_t") and pocket_residues is None:
         raise click.UsageError("--pocket_residues required for pocket_p/pocket_t")
 
+    # --- Common setup ---
     torch.set_float32_matmul_precision("highest")
     if seed is not None:
+        from pytorch_lightning import seed_everything
         seed_everything(seed)
 
     cache = Path(cache).expanduser()
@@ -141,7 +282,8 @@ def predict(
 
     ccd_path = cache / "ccd.pkl"
     process_inputs(data=data_files, out_dir=out_dir, ccd_path=ccd_path,
-                   use_msa_server=False, msa_server_url="", msa_pairing_strategy="greedy")
+                   use_msa_server=False, msa_server_url="",
+                   msa_pairing_strategy="greedy")
 
     processed_dir = out_dir / "processed"
     processed = BoltzProcessedInput(
@@ -168,30 +310,37 @@ def predict(
         "write_full_pde": False,
         "conformix": True,
     }
+    # weights_only=False required for Boltz checkpoint (contains custom objects)
+    import pytorch_lightning as pl
     model_module = Boltz1.load_from_checkpoint(
         checkpoint, strict=True, predict_args=predict_args,
         map_location="cpu", diffusion_process_args=asdict(BoltzDiffusionParams()),
-        ema=False,
+        ema=False, weights_only=False,
     )
     model_module.confidence_module.use_s_diffusion = False
     model_module.accumulate_token_repr = False
     model_module.eval()
 
     # Parse sweep values
-    twist_target_values = [float(x) for x in str(twist_target_values).split(",")]
-    twist_strength_values = [float(x) for x in str(twist_strength_values).split(",")]
-    tstart_values = [int(x) for x in tstart_step.split(",")]
-    tstop_values = [int(x) for x in tstop_step.split(",")]
+    twist_target_vals = [float(x) for x in str(twist_target_values).split(",")]
+    twist_strength_vals = [float(x) for x in str(twist_strength_values).split(",")]
+    tstart_vals = [int(x) for x in tstart_step.split(",")]
+    tstop_vals = [int(x) for x in tstop_step.split(",")]
 
-    # Apo structure for alignment
-    untwisted_coords, region_mask, ss_atom_mask = \
-        get_secondary_structure_region_masks(input_cif, subset_residues)
-
-    twisting_mask = ss_atom_mask
-    if twist_rmsd_full_sequence:
-        twisting_mask = torch.ones_like(ss_atom_mask)
-    if subset_residues:
-        twisting_mask = twisting_mask * region_mask
+    # Apo reference structure
+    if _HAS_PYMOL:
+        untwisted_coords, region_mask, ss_atom_mask = \
+            get_secondary_structure_region_masks(input_cif, subset_residues)
+        twisting_mask = ss_atom_mask
+        if twist_rmsd_full_sequence:
+            twisting_mask = torch.ones_like(ss_atom_mask)
+        if subset_residues:
+            twisting_mask = twisting_mask * region_mask
+    else:
+        untwisted_coords, region_mask, twisting_mask = \
+            _load_apo_masks_no_pymol(input_cif)
+        if twist_rmsd_full_sequence:
+            twisting_mask = torch.ones_like(twisting_mask)
 
     desc_string = bias_type
     existing_runs = glob.glob(str(out_dir / "predictions" / f"{desc_string}" / "run*"))
@@ -201,8 +350,9 @@ def predict(
     device = torch.device("cuda" if accelerator == "gpu" else accelerator)
     model_module.to(device)
 
-    # Load PocketMiner model if needed
+    # Load PocketMiner if needed
     pm_model = None
+    pocket_idx_list = None
     if bias_type in ("pocket_p", "pocket_t"):
         pm_model = load_pocketminer_model(device=str(device))
         pocket_idx_list = parse_pocket_residues(pocket_residues)
@@ -229,32 +379,22 @@ def predict(
                 "train_accumulate_token_repr": False,
             }
 
-        # Build pocket potential for this protein (if needed)
+        # Build pocket potential per protein (if needed)
         pocket_pot = None
         if bias_type in ("pocket_p", "pocket_t"):
             feats = out["feats"]
-            # Build backbone atom indices from atom_to_token
-            atom_to_token = feats["atom_to_token"][0]  # [N_atoms, N_tokens]
+            atom_to_token = feats["atom_to_token"][0]
             n_tokens = int(feats["token_pad_mask"][0].sum().item())
             bb_indices = build_bb_atom_indices(atom_to_token, n_tokens)
 
-            # Get sequence: res_type is one-hot [N_tokens, num_classes]
-            # We need to map Boltz's res_type to PocketMiner's 0-19
-            # For now, extract from PDB (more reliable than mapping encodings)
             import mdtraj as md
-            traj = md.load(input_cif if input_cif.endswith('.pdb') else input_cif)
+            traj = md.load(input_cif)
             prot_iis = traj.top.select("protein and (name CA)")
-            n_ca = len(prot_iis)
             seq = []
             for idx in prot_iis:
-                atom = traj.top.atom(idx)
-                rname = atom.residue.name
-                if rname in ABBREV:
-                    seq.append(AA_LOOKUP[ABBREV[rname]])
-                else:
-                    seq.append(0)  # unknown -> ALA
+                rname = traj.top.atom(idx).residue.name
+                seq.append(AA_LOOKUP.get(ABBREV.get(rname, "A"), 0))
             seq_indices = torch.tensor(seq[:n_tokens], dtype=torch.long)
-            # Pad to N_tokens_padded
             N_tokens_padded = atom_to_token.shape[1]
             if len(seq_indices) < N_tokens_padded:
                 seq_indices = torch.nn.functional.pad(
@@ -268,55 +408,14 @@ def predict(
                 n_tokens=n_tokens,
             )
 
-        # Define twist_fn based on bias_type
+        # Build twist_fn
         def make_twist_fn(alpha_val, beta_val, tstart_val, tstop_val):
             if bias_type == "rmsd":
-                # Use ConforMix's original RMSD twist_fn (inlined)
-                def rmsd_inner(xt, x0_hat, return_grad=True, t=None, atom_mask=None):
-                    padded_atom_size = x0_hat.shape[1]
-                    twisting_mask_padded = torch.nn.functional.pad(
-                        twisting_mask, (0, padded_atom_size - twisting_mask.shape[0]),
-                        value=0).to(x0_hat.device)
-                    untwisted_padded = torch.nn.functional.pad(
-                        untwisted_coords, (0, 0, 0, padded_atom_size - untwisted_coords.shape[0]),
-                        value=0).to(x0_hat.device)
-
-                    atom_pos_aligned = weighted_rigid_align(
-                        x0_hat, untwisted_padded, atom_mask,
-                        twisting_mask_padded, keep_gradients=True)
-                    mse_loss = ((atom_pos_aligned - untwisted_padded) ** 2).sum(dim=-1)
-                    rmsd = torch.sqrt(
-                        torch.sum(mse_loss * twisting_mask_padded, dim=-1)
-                        / torch.sum(twisting_mask_padded, dim=-1))
-                    log_potential = -((rmsd - beta_val) ** 2)
-
-                    if not return_grad:
-                        return log_potential.to(device).detach()
-
-                    if t is not None and tstart_val >= t >= tstop_val:
-                        grad = torch.autograd.grad(
-                            log_potential, xt,
-                            grad_outputs=torch.ones_like(log_potential),
-                            create_graph=False, allow_unused=True)[0]
-                        if grad is None:
-                            grad = torch.zeros_like(xt)
-                        if t:
-                            if alpha_val > 0:
-                                factor = alpha_val
-                            elif alpha_val < 0:
-                                factor = abs(alpha_val) * 200 * (
-                                    1 + np.cos(np.pi * (np.log(1 + 4 * (230 - t)) / np.log(10)))
-                                ) / 2
-                            else:
-                                factor = 0
-                            grad = grad * factor
-                    else:
-                        grad = torch.zeros_like(xt, device=device)
-
-                    return log_potential.to(device).detach(), grad.to(device).detach()
-
-                return rmsd_inner
-
+                # Verbatim ConforMix d0fd34c:887-976
+                return _conformix_rmsd_twist_fn(
+                    alpha_val, beta_val, tstart_val, tstop_val,
+                    twisting_mask, untwisted_coords, device,
+                )
             else:
                 return pocket_twist_fn(
                     alpha=alpha_val, beta=beta_val,
@@ -328,21 +427,21 @@ def predict(
                     weighted_rigid_align_fn=weighted_rigid_align,
                 )
 
-        # Sample step (same as ConforMix's)
-        def sample_step(sample_inputs, twist_fn_, pdistogram):
+        # Sample step
+        def sample_step(sample_inputs_, twist_fn_, pdistogram):
             try:
                 with torch.no_grad(), torch.autocast(device_type=device.type, dtype=torch.float32):
                     sample_out = model_module.structure_module.sample_twisted(
-                        **sample_inputs, twist_fn=twist_fn_,
+                        **sample_inputs_, twist_fn=twist_fn_,
                         ess_threshold=ess_threshold)
                     sample_out.update(
                         model_module.confidence_module(
-                            s_inputs=sample_inputs["s_inputs"].detach(),
-                            s=sample_inputs["s_trunk"].detach(),
-                            z=sample_inputs["z_trunk"].detach(),
+                            s_inputs=sample_inputs_["s_inputs"].detach(),
+                            s=sample_inputs_["s_trunk"].detach(),
+                            z=sample_inputs_["z_trunk"].detach(),
                             s_diffusion=None,
                             x_pred=sample_out["sample_atom_coords"].detach(),
-                            feats=sample_inputs["feats"],
+                            feats=sample_inputs_["feats"],
                             pred_distogram_logits=pdistogram.detach(),
                             multiplicity=diffusion_samples,
                             run_sequentially=True,
@@ -353,8 +452,9 @@ def predict(
                 pred_dict["coords"] = sample_out["sample_atom_coords"]
                 pred_dict["confidence_score"] = (
                     4 * sample_out["complex_plddt"] +
-                    (sample_out["iptm"] if not torch.allclose(
-                        sample_out["iptm"], torch.zeros_like(sample_out["iptm"]))
+                    (sample_out["iptm"]
+                     if not torch.allclose(sample_out["iptm"],
+                                           torch.zeros_like(sample_out["iptm"]))
                      else sample_out["ptm"])
                 ) / 5
                 for key in ["ptm", "iptm", "ligand_iptm", "protein_iptm",
@@ -366,24 +466,28 @@ def predict(
                 return pred_dict
             except RuntimeError as e:
                 if "out of memory" in str(e):
-                    print("| WARNING: ran out of memory, skipping batch")
+                    click.echo("WARNING: OOM, skipping batch")
                     torch.cuda.empty_cache()
                     return {"exception": True}
                 raise
 
-        for alpha_val in twist_strength_values:
-            for beta_val in twist_target_values:
-                for tstart_val in tstart_values:
-                    for tstop_val in tstop_values:
+        for alpha_val in twist_strength_vals:
+            for beta_val in twist_target_vals:
+                for tstart_val in tstart_vals:
+                    for tstop_val in tstop_vals:
                         click.echo(f"Running {bias_type} alpha={alpha_val} "
-                                   f"beta={beta_val} tstart={tstart_val} tstop={tstop_val}")
+                                   f"beta={beta_val} tstart={tstart_val} "
+                                   f"tstop={tstop_val}")
 
-                        full_output_dir = (out_dir / "predictions" / desc_string /
-                                           f"variation_alpha_{alpha_val}_beta_{beta_val}")
+                        full_output_dir = (
+                            out_dir / "predictions" / desc_string /
+                            f"variation_alpha_{alpha_val}_beta_{beta_val}")
 
-                        twist_fn_ = make_twist_fn(alpha_val, beta_val, tstart_val, tstop_val)
+                        twist_fn_ = make_twist_fn(
+                            alpha_val, beta_val, tstart_val, tstop_val)
 
-                        sample_out = sample_step(sample_inputs, twist_fn_, out["pdistogram"])
+                        sample_out = sample_step(
+                            sample_inputs, twist_fn_, out["pdistogram"])
 
                         if sample_out["exception"]:
                             continue
@@ -394,48 +498,48 @@ def predict(
                             output_format=output_format,
                         )
 
-                        input_dict = {
-                            "desc_string": desc_string,
-                            "alpha": alpha_val,
-                            "beta": beta_val,
-                            "tstart": tstart_val,
-                            "tstop": tstop_val,
-                            "bias_type": bias_type,
-                            "pocket_residues": pocket_residues,
-                        }
-
-                        # Compute RMSD for logging (always, regardless of bias type)
+                        # RMSD logging (all bias types)
                         atom_pos = sample_out["coords"]
                         atom_mask_out = sample_out["masks"]
-                        padded_atom_size = atom_pos.shape[1]
-                        padded_tw_mask = torch.nn.functional.pad(
-                            twisting_mask, (0, padded_atom_size - twisting_mask.shape[0]),
-                            value=0).to(atom_pos.device)
-                        untwisted_padded = torch.nn.functional.pad(
-                            untwisted_coords, (0, 0, 0, padded_atom_size - untwisted_coords.shape[0]),
-                            value=0).to(atom_pos.device)
-                        atom_pos_aligned = weighted_rigid_align(
-                            atom_pos, untwisted_padded, atom_mask_out,
-                            padded_tw_mask, keep_gradients=False)
-                        mse = ((atom_pos_aligned - untwisted_padded) ** 2).sum(dim=-1)
-                        rmsd = torch.sqrt(
-                            torch.sum(mse * padded_tw_mask, dim=-1)
-                            / torch.sum(padded_tw_mask, dim=-1))
-                        rmsd = rmsd.cpu().numpy().tolist()
-                        input_dict["input_cif"] = input_cif
+                        padded = atom_pos.shape[1]
+                        tw_pad = torch.nn.functional.pad(
+                            twisting_mask, (0, padded - twisting_mask.shape[0]),
+                            value=0).to(device)
+                        uw_pad = torch.nn.functional.pad(
+                            untwisted_coords,
+                            (0, 0, 0, padded - untwisted_coords.shape[0]),
+                            value=0).to(device)
+                        aligned = weighted_rigid_align(
+                            atom_pos, uw_pad, atom_mask_out, tw_pad,
+                            keep_gradients=False)
+                        mse = ((aligned - uw_pad) ** 2).sum(dim=-1)
+                        rmsd_vals = torch.sqrt(
+                            torch.sum(mse * tw_pad, dim=-1)
+                            / torch.sum(tw_pad, dim=-1)
+                        ).cpu().numpy().tolist()
+
+                        input_dict = {
+                            "desc_string": desc_string,
+                            "alpha": alpha_val, "beta": beta_val,
+                            "tstart": tstart_val, "tstop": tstop_val,
+                            "bias_type": bias_type,
+                            "pocket_residues": pocket_residues,
+                            "input_cif": input_cif,
+                        }
 
                         pred_writer.write_on_batch_end(
                             trainer=None, pl_module=None,
                             prediction=sample_out, batch_indices=None,
                             batch=batch, batch_idx=None, dataloader_idx=None,
-                            input_dict=input_dict, rmsd=rmsd,
+                            input_dict=input_dict, rmsd=rmsd_vals,
                         )
 
-                        # Log ESS trajectory
                         if "ess_trace" in sample_out:
                             ess = sample_out["ess_trace"]
-                            click.echo(f"  ESS: min={ess.min():.2f} max={ess.max():.2f} "
-                                        f"final={ess[-1]:.2f}")
+                            click.echo(
+                                f"  ESS min={ess.min():.2f} max={ess.max():.2f} "
+                                f"final={ess[-1]:.2f}")
+                        click.echo(f"  RMSD: {rmsd_vals}")
 
     click.echo(f"Done. Results in {out_dir / 'predictions' / desc_string}")
 
