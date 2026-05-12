@@ -58,11 +58,14 @@ def pocket_twist_fn(
                 (0, 0, 0, padded_atom_size - untwisted_coords.shape[0]),
                 value=0,
             ).to(device)
-            # Expand to match particle batch dim P
+            # Expand to match particle batch dim P (may be smaller than
+            # atom_mask due to SMC batch_p splitting in mg_wrapper.py:380)
             untwisted_expanded = untwisted_padded.unsqueeze(0).expand(P, -1, -1)
             mask_expanded = twisting_mask_padded.unsqueeze(0).expand(P, -1)
+            # atom_mask may have more rows than P (full particle count vs batch)
+            atom_mask_batch = atom_mask[:P] if atom_mask.shape[0] > P else atom_mask
             x0_hat_aligned = weighted_rigid_align_fn(
-                x0_hat, untwisted_expanded, atom_mask,
+                x0_hat, untwisted_expanded, atom_mask_batch,
                 mask_expanded, keep_gradients=True,
             )
         else:
