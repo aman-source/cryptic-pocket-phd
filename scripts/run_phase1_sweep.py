@@ -218,36 +218,59 @@ def start_checkpoint_loop(out_dir, interval_sec=1200):
                f"(every {interval_sec // 60} min)")
 
 
+def kabsch_align(mobile, target):
+    """Align mobile onto target using Kabsch algorithm. Both [N, 3] arrays."""
+    assert mobile.shape == target.shape
+    # Center
+    mobile_center = mobile.mean(axis=0)
+    target_center = target.mean(axis=0)
+    mobile_c = mobile - mobile_center
+    target_c = target - target_center
+    # Covariance
+    H = mobile_c.T @ target_c
+    U, S, Vt = np.linalg.svd(H)
+    # Correct reflection
+    d = np.linalg.det(Vt.T @ U.T)
+    sign_matrix = np.eye(3)
+    sign_matrix[2, 2] = np.sign(d)
+    R = Vt.T @ sign_matrix @ U.T
+    # Apply
+    aligned = (mobile - mobile_center) @ R.T + target_center
+    return aligned
+
+
 def compute_coverage(sample_coords, holo_coords, apo_coords, threshold_frac=0.5):
     """Compute worst-matched coverage at threshold_frac * ref-to-ref RMSD.
 
-    ConforMix metric: fraction of holo-state heavy atoms within threshold
-    of any generated sample, after alignment.
+    All coordinate sets are Kabsch-aligned to holo before comparison.
 
     Args:
-        sample_coords: list of [N_atoms, 3] numpy arrays (generated samples)
-        holo_coords: [N_atoms, 3] numpy array (holo reference)
-        apo_coords: [N_atoms, 3] numpy array (apo reference)
+        sample_coords: list of [N_atoms, 3] numpy arrays (generated sample CAs)
+        holo_coords: [N_atoms, 3] numpy array (holo CA reference)
+        apo_coords: [N_atoms, 3] numpy array (apo CA reference)
         threshold_frac: fraction of ref-to-ref RMSD to use as threshold
 
     Returns:
         coverage: float in [0, 1]
     """
-    # Ref-to-ref RMSD (apo vs holo)
-    ref_rmsd = np.sqrt(((apo_coords - holo_coords) ** 2).sum(-1).mean())
+    n_atoms = holo_coords.shape[0]
+
+    # Align apo to holo, compute ref-to-ref RMSD
+    apo_aligned = kabsch_align(apo_coords, holo_coords)
+    ref_rmsd = np.sqrt(((apo_aligned - holo_coords) ** 2).sum(-1).mean())
     threshold = threshold_frac * ref_rmsd
 
     if len(sample_coords) == 0:
         return 0.0
 
-    # For each holo atom, find minimum distance to any sample atom
-    # (after alignment — samples are already aligned via Boltz output)
-    n_atoms = holo_coords.shape[0]
+    # For each holo atom, find minimum distance across all aligned samples
     min_dists = np.full(n_atoms, np.inf)
 
     for sample in sample_coords:
         n_s = min(sample.shape[0], n_atoms)
-        dists = np.sqrt(((sample[:n_s] - holo_coords[:n_s]) ** 2).sum(-1))
+        # Align sample CAs to holo CAs
+        sample_aligned = kabsch_align(sample[:n_s], holo_coords[:n_s])
+        dists = np.sqrt(((sample_aligned - holo_coords[:n_s]) ** 2).sum(-1))
         min_dists[:n_s] = np.minimum(min_dists[:n_s], dists)
 
     coverage = (min_dists < threshold).mean()

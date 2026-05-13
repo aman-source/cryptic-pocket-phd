@@ -1,0 +1,15 @@
+{
+  "protein": "P61586",
+  "short_name": "RhoA",
+  "bias_type": "none",
+  "alpha_val": 0.0,
+  "param_value": 0.0,
+  "n_samples": 50,
+  "ess_min": 50.0,
+  "ess_mean": 50.0,
+  "ess_final": 50.0,
+  "rmsd_mean": 5.410908222198486,
+  "plddt_mean": 0.6420144438743591,
+  "coverage": 1.0,
+  "elapsed_sec": 114.51482653617859
+}

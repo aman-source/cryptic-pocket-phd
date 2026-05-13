@@ -1,0 +1,15 @@
+{
+  "protein": "P62593",
+  "short_name": "TEM-1",
+  "bias_type": "none",
+  "alpha_val": 0.0,
+  "param_value": 0.0,
+  "n_samples": 50,
+  "ess_min": 50.0,
+  "ess_mean": 50.0,
+  "ess_final": 50.0,
+  "rmsd_mean": 13.217925071716309,
+  "plddt_mean": 0.5030555129051208,
+  "coverage": NaN,
+  "elapsed_sec": 176.79663681983948
+}

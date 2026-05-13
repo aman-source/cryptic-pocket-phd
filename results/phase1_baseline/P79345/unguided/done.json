@@ -1,0 +1,15 @@
+{
+  "protein": "P79345",
+  "short_name": "NPC2",
+  "bias_type": "none",
+  "alpha_val": 0.0,
+  "param_value": 0.0,
+  "n_samples": 50,
+  "ess_min": 50.0,
+  "ess_mean": 50.0,
+  "ess_final": 50.0,
+  "rmsd_mean": 6.992291450500488,
+  "plddt_mean": 0.605270504951477,
+  "coverage": 0.1076923076923077,
+  "elapsed_sec": 84.17587041854858
+}

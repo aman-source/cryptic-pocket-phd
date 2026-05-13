@@ -1,0 +1,15 @@
+{
+  "protein": "P9WPY3",
+  "short_name": "AroK",
+  "bias_type": "none",
+  "alpha_val": 0.0,
+  "param_value": 0.0,
+  "n_samples": 50,
+  "ess_min": 50.0,
+  "ess_mean": 50.0,
+  "ess_final": 50.0,
+  "rmsd_mean": 9.752684593200684,
+  "plddt_mean": 0.673614501953125,
+  "coverage": 0.13253012048192772,
+  "elapsed_sec": 111.52885437011719
+}

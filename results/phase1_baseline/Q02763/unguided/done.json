@@ -1,0 +1,15 @@
+{
+  "protein": "Q02763",
+  "short_name": "Tie-2",
+  "bias_type": "none",
+  "alpha_val": 0.0,
+  "param_value": 0.0,
+  "n_samples": 50,
+  "ess_min": 50.0,
+  "ess_mean": 50.0,
+  "ess_final": 50.0,
+  "rmsd_mean": 20.68316078186035,
+  "plddt_mean": 0.3805745244026184,
+  "coverage": 0.0,
+  "elapsed_sec": 213.7569408416748
+}
