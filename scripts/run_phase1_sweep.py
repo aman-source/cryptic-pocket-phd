@@ -268,7 +268,9 @@ def run_single_config(
     pocket_str = protein["pocket_residues"]
     pocket_idx = parse_pocket_residues(pocket_str)
 
-    if bias_type == "pocket_p":
+    if bias_type == "none":
+        config_name = "unguided"
+    elif bias_type == "pocket_p":
         config_name = f"pocket_p_beta_{param_value}"
     else:
         config_name = f"pocket_t_alpha{int(alpha_val)}_target_{param_value}"
@@ -357,23 +359,27 @@ def run_single_config(
             seq_indices = torch.nn.functional.pad(
                 seq_indices, (0, N_tok_pad - len(seq_indices)))
 
-        pocket_pot = PocketPotential(
-            model=pm_model,
-            pocket_residue_indices=[r for r in pocket_idx if r < n_tokens],
-            bb_atom_indices=bb_indices.to(device),
-            seq_indices=seq_indices.to(device),
-            n_tokens=n_tokens,
-        )
+        # Build twist function (None for unguided baseline)
+        if bias_type == "none":
+            twist_fn_ = None
+        else:
+            pocket_pot = PocketPotential(
+                model=pm_model,
+                pocket_residue_indices=[r for r in pocket_idx if r < n_tokens],
+                bb_atom_indices=bb_indices.to(device),
+                seq_indices=seq_indices.to(device),
+                n_tokens=n_tokens,
+            )
 
-        twist_fn_ = pocket_twist_fn(
-            alpha=alpha_val, beta=beta_val,
-            tstart_step=200, tstop_step=0,
-            bias_type=bias_type,
-            pocket_potential=pocket_pot,
-            untwisted_coords=untwisted_coords,
-            twisting_mask=twisting_mask,
-            weighted_rigid_align_fn=weighted_rigid_align,
-        )
+            twist_fn_ = pocket_twist_fn(
+                alpha=alpha_val, beta=beta_val,
+                tstart_step=200, tstop_step=0,
+                bias_type=bias_type,
+                pocket_potential=pocket_pot,
+                untwisted_coords=untwisted_coords,
+                twisting_mask=twisting_mask,
+                weighted_rigid_align_fn=weighted_rigid_align,
+            )
 
         # Run SMC
         t0 = time.time()
@@ -512,8 +518,10 @@ def run_single_config(
               help="Comma-separated short names to run (subset)")
 @click.option("--max_configs", type=int, default=None,
               help="Limit to first N configs per protein (for smoke tests)")
+@click.option("--baseline", is_flag=True, default=False,
+              help="Run unguided baseline only (no pocket guidance)")
 def main(config, out_dir, accelerator, cache, override_samples,
-         override_steps, proteins, max_configs):
+         override_steps, proteins, max_configs, baseline):
     """Run Phase 1 β/α sweep."""
 
     with open(config) as f:
@@ -543,12 +551,15 @@ def main(config, out_dir, accelerator, cache, override_samples,
 
     # Build config grid: (bias_type, param_value, alpha_val)
     configs = []
-    pocket_p_alpha = cfg["sweep"]["pocket_p"]["alpha"]
-    for beta in cfg["sweep"]["pocket_p"]["beta_values"]:
-        configs.append(("pocket_p", beta, pocket_p_alpha))
-    for alpha in cfg["sweep"]["pocket_t"]["alpha_values"]:
-        for target in cfg["sweep"]["pocket_t"]["target_values"]:
-            configs.append(("pocket_t", target, alpha))
+    if baseline:
+        configs.append(("none", 0.0, 0.0))
+    else:
+        pocket_p_alpha = cfg["sweep"]["pocket_p"]["alpha"]
+        for beta in cfg["sweep"]["pocket_p"]["beta_values"]:
+            configs.append(("pocket_p", beta, pocket_p_alpha))
+        for alpha in cfg["sweep"]["pocket_t"]["alpha_values"]:
+            for target in cfg["sweep"]["pocket_t"]["target_values"]:
+                configs.append(("pocket_t", target, alpha))
 
     if max_configs is not None:
         configs = configs[:max_configs]
