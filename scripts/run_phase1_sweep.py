@@ -381,14 +381,22 @@ def run_single_config(
                 weighted_rigid_align_fn=weighted_rigid_align,
             )
 
-        # Run SMC
+        # Run sampling
         t0 = time.time()
         try:
             with torch.no_grad(), torch.autocast(
                     device_type=device.type, dtype=torch.float32):
-                sample_out = model_module.structure_module.sample_twisted(
-                    **sample_inputs, twist_fn=twist_fn_,
-                    ess_threshold=ess_threshold)
+                if twist_fn_ is None:
+                    # Unguided baseline: use standard diffusion sampler
+                    sample_out = model_module.structure_module.sample(
+                        **sample_inputs)
+                    # No ESS for unguided — fill with n_samples (perfect)
+                    sample_out["ess_trace"] = torch.full((sampling_steps,),
+                                                         float(n_samples))
+                else:
+                    sample_out = model_module.structure_module.sample_twisted(
+                        **sample_inputs, twist_fn=twist_fn_,
+                        ess_threshold=ess_threshold)
         except RuntimeError as e:
             if "out of memory" in str(e):
                 click.echo(f"  OOM on {uid}/{config_name}")
@@ -397,7 +405,7 @@ def run_single_config(
             raise
 
         elapsed = time.time() - t0
-        click.echo(f"  SMC done in {elapsed:.0f}s")
+        click.echo(f"  Sampling done in {elapsed:.0f}s")
 
         # Extract metrics
         coords = sample_out["sample_atom_coords"].cpu()  # [n_samples, N_atoms, 3]
