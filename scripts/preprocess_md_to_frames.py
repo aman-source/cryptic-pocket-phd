@@ -126,6 +126,41 @@ def process_atlas_protein(
     return meta
 
 
+def _parse_ca_indices_from_pdb(pdb_str: str) -> list[int]:
+    """
+    Parse CA (alpha-carbon) atom indices from a PDB-format string.
+
+    mdCATH stores a PDB string in h5[domain_id]['pdb']. Atom serial order
+    in the PDB corresponds 1:1 to axis-1 of the coords array.
+
+    Returns 0-based atom indices where atom name (columns 13-16, stripped) == "CA".
+    """
+    ca_indices = []
+    atom_idx = 0  # 0-based index into coords axis-1
+    for line in pdb_str.splitlines():
+        if not line.startswith("ATOM") and not line.startswith("HETATM"):
+            continue
+        atom_name = line[12:16].strip()
+        if atom_name == "CA":
+            ca_indices.append(atom_idx)
+        atom_idx += 1
+    return ca_indices
+
+
+def _parse_sequence_from_pdb(pdb_str: str, ca_indices: list[int]) -> str:
+    """Extract 1-letter sequence from PDB string at CA atom positions."""
+    atom_records = [
+        line for line in pdb_str.splitlines()
+        if line.startswith("ATOM") or line.startswith("HETATM")
+    ]
+    sequence = ""
+    for idx in ca_indices:
+        if idx < len(atom_records):
+            resname = atom_records[idx][17:20].strip()
+            sequence += AA3TO1.get(resname, "X")
+    return sequence
+
+
 def process_mdcath_protein(
     protein_dir: Path,
     out_dir: Path,
@@ -133,7 +168,23 @@ def process_mdcath_protein(
     skip_ns: float,
     temperature: int = 320,  # use lowest temperature (closest to native)
 ) -> dict | None:
-    """Extract frames from mdCATH HDF5 file."""
+    """
+    Extract frames from mdCATH HDF5 file.
+
+    Real mdCATH H5 structure (layout mdcath-only-protein-v1.0):
+        {domain_id}/
+            pdb: () bytes     — PDB string (atom serial order matches coords axis-1)
+            resname: (n_atoms,) — per-atom residue names
+            resid: (n_atoms,)   — per-atom residue IDs
+            {temperature}/
+                {replicate}/
+                    coords: (n_frames, n_atoms, 3) float32  — in Angstroms
+        Temperatures: 320, 348, 379, 413, 450 K
+        Replicates: 0–4 (5 per temperature)
+        Frames per replicate: ~440
+
+    We use temperature=320K, replicate=0 (lowest T, most native-like).
+    """
     import h5py
 
     h5_files = list(protein_dir.glob("*.h5"))
@@ -148,94 +199,59 @@ def process_mdcath_protein(
 
     try:
         with h5py.File(h5_path, "r") as h5f:
-            # mdCATH structure: temperatures → replicates → coords
-            # Try common key patterns
-            coords_key = None
-            for key_pattern in [
-                f"{temperature}K/coords",
-                f"coords_{temperature}",
-                "coords",
-                "positions",
-            ]:
-                if key_pattern in h5f:
-                    coords_key = key_pattern
-                    break
-
-            if coords_key is None:
-                # List available keys for debugging
-                keys = list(h5f.keys())
-                print(f"  Available keys: {keys}")
-                # Try navigating temperature groups
-                for key in keys:
-                    if str(temperature) in key or "320" in key:
-                        subkeys = list(h5f[key].keys()) if isinstance(h5f[key], h5py.Group) else []
-                        print(f"  {key} subkeys: {subkeys}")
-                        for sk in subkeys:
-                            if "coord" in sk.lower() or "pos" in sk.lower():
-                                coords_key = f"{key}/{sk}"
-                                break
-                    if coords_key:
-                        break
-
-            if coords_key is None:
-                print(f"  Cannot find coordinates in {h5_path}")
+            if domain_id not in h5f:
+                print(f"  domain key '{domain_id}' not found in {h5_path}")
                 return None
 
-            all_coords_dataset = h5f[coords_key]
-            total_frames = all_coords_dataset.shape[0]
+            grp = h5f[domain_id]
+            temp_key = str(temperature)
+            if temp_key not in grp:
+                available_temps = [k for k in grp.keys() if k.isdigit()]
+                if not available_temps:
+                    print(f"  No temperature groups in {domain_id}")
+                    return None
+                temp_key = sorted(available_temps)[0]
+                print(f"  Temperature {temperature}K not found, using {temp_key}K")
 
-            # Determine timestep (mdCATH typically saves every 1 ns)
-            dt_ns = 1.0  # default assumption
-            skip_frames_count = int(skip_ns / dt_ns)
-            skip_frames_count = min(skip_frames_count, total_frames - 1)
+            # Use replicate 0
+            rep_key = "0"
+            if rep_key not in grp[temp_key]:
+                rep_key = sorted(grp[temp_key].keys())[0]
 
-            usable = total_frames - skip_frames_count
+            coords_dataset = grp[temp_key][rep_key]["coords"]  # (n_frames, n_atoms, 3)
+            total_frames = coords_dataset.shape[0]
+
+            # Parse CA indices from PDB string
+            pdb_raw = grp["pdb"][()]
+            pdb_str = pdb_raw.decode() if isinstance(pdb_raw, bytes) else str(pdb_raw)
+            ca_indices = _parse_ca_indices_from_pdb(pdb_str)
+            if not ca_indices:
+                print(f"  No CA atoms found in PDB for {domain_id}")
+                return None
+
+            sequence = _parse_sequence_from_pdb(pdb_str, ca_indices)
+
+            # mdCATH: ~1 frame/ns, skip first skip_ns frames
+            skip_frames = int(skip_ns)
+            skip_frames = min(skip_frames, total_frames - 1)
+            usable = total_frames - skip_frames
             if usable < n_frames:
-                frame_indices = np.arange(skip_frames_count, total_frames)
+                frame_indices = np.arange(skip_frames, total_frames)
             else:
-                frame_indices = np.linspace(skip_frames_count, total_frames - 1, n_frames, dtype=int)
-
-            # Extract CA coords — need topology info
-            # mdCATH may store atom names
-            sequence = ""
-            ca_indices_list = []
-
-            for aname_key in ["atom_names", "atom_name", "atoms"]:
-                if aname_key in h5f:
-                    atom_names = h5f[aname_key][:]
-                    if isinstance(atom_names[0], bytes):
-                        atom_names = [a.decode() for a in atom_names]
-                    ca_indices_list = [i for i, n in enumerate(atom_names) if n.strip() == "CA"]
-                    break
-
-            for seq_key in ["sequence", "seq", "residue_names"]:
-                if seq_key in h5f:
-                    seq_data = h5f[seq_key]
-                    if isinstance(seq_data, h5py.Dataset):
-                        raw = seq_data[()]
-                        if isinstance(raw, bytes):
-                            sequence = raw.decode()
-                        elif isinstance(raw, np.ndarray):
-                            sequence = "".join(
-                                AA3TO1.get(r.decode().strip() if isinstance(r, bytes) else r.strip(), "X")
-                                for r in raw
-                            )
-                        else:
-                            sequence = str(raw)
-                    break
+                frame_indices = np.linspace(skip_frames, total_frames - 1, n_frames, dtype=int)
 
             for idx, frame_idx in enumerate(frame_indices):
                 frame_path = frame_out_dir / f"{idx:04d}.npz"
                 if frame_path.exists():
                     continue
 
-                coords = np.array(all_coords_dataset[frame_idx], dtype=np.float32)
-                # coords might be in nm — check range
-                coord_range = coords.max() - coords.min()
-                if coord_range < 50:  # likely nm, convert to Angstroms
-                    coords = coords * 10.0
+                coords = np.array(coords_dataset[int(frame_idx)], dtype=np.float32)  # (n_atoms, 3)
+                # Sanity check: coords should already be in Å (range ~1-200 Å)
+                coord_range = float(coords.max() - coords.min())
+                if coord_range < 5.0:
+                    coords = coords * 10.0  # nm → Å fallback
 
-                ca_coords = coords[ca_indices_list] if ca_indices_list else coords
+                ca_coords = coords[ca_indices]  # (n_res, 3)
 
                 np.savez_compressed(
                     frame_path,
@@ -248,19 +264,27 @@ def process_mdcath_protein(
 
     except Exception as e:
         print(f"  Error processing {h5_path}: {e}")
+        import traceback
+        traceback.print_exc()
         return None
 
+    n_residues = len(ca_indices)
     meta = {
         "protein_id": domain_id,
         "source": "mdcath",
         "total_frames": total_frames,
         "n_extracted": len(frame_indices),
+        "n_residues": n_residues,
+        "n_atoms": int(coords_dataset.shape[1]),
         "sequence": sequence,
+        "temperature_K": int(temp_key),
     }
     with open(frame_out_dir / "metadata.json", "w") as f:
         json.dump(meta, f, indent=2)
 
     return meta
+
+
 
 
 @click.command()
