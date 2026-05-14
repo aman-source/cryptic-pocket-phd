@@ -90,53 +90,39 @@ def _scan_direction(
     """
     Scan along a direction for PSP (protein-solvent-protein) pattern.
 
-    For each grid point, check if scanning in both +dir and -dir
-    hits protein (with solvent gap in between).
+    Vectorized: accumulate OR over max_scan shift steps instead of
+    looping per grid point. ~50-100x faster than pure Python loop.
 
     Returns binary array: 1 if PSP detected at that point, 0 otherwise.
     """
     nx, ny, nz = protein_mask.shape
-    psp = np.zeros((nx, ny, nz), dtype=np.int32)
+    max_scan = 8
 
-    # For each non-protein grid point, check if there's protein
-    # in both +direction and -direction (with a gap)
-    max_scan = 8  # max distance to scan in each direction (grid units)
+    fwd = np.zeros((nx, ny, nz), dtype=bool)
+    bwd = np.zeros((nx, ny, nz), dtype=bool)
 
-    for i in range(nx):
-        for j in range(ny):
-            for k in range(nz):
-                if protein_mask[i, j, k]:
-                    continue  # skip protein interior points
+    for s in range(1, max_scan + 1):
+        si, sj, sk = s * di, s * dj, s * dk
 
-                # Scan forward
-                found_fwd = False
-                ci, cj, ck = i + di, j + dj, k + dk
-                for _ in range(max_scan):
-                    if ci < 0 or ci >= nx or cj < 0 or cj >= ny or ck < 0 or ck >= nz:
-                        break
-                    if protein_mask[ci, cj, ck]:
-                        found_fwd = True
-                        break
-                    ci += di
-                    cj += dj
-                    ck += dk
+        # Forward: point (i,j,k) sees protein at (i+si, j+sj, k+sk)
+        i_dst = slice(None, nx - si if si > 0 else None)
+        j_dst = slice(None, ny - sj if sj > 0 else None)
+        k_dst = slice(None, nz - sk if sk > 0 else None)
+        i_src = slice(si, None)
+        j_src = slice(sj, None)
+        k_src = slice(sk, None)
+        fwd[i_dst, j_dst, k_dst] |= protein_mask[i_src, j_src, k_src]
 
-                if not found_fwd:
-                    continue
+        # Backward: point (i,j,k) sees protein at (i-si, j-sj, k-sk)
+        i_dst2 = slice(si, None)
+        j_dst2 = slice(sj, None)
+        k_dst2 = slice(sk, None)
+        i_src2 = slice(None, nx - si if si > 0 else None)
+        j_src2 = slice(None, ny - sj if sj > 0 else None)
+        k_src2 = slice(None, nz - sk if sk > 0 else None)
+        bwd[i_dst2, j_dst2, k_dst2] |= protein_mask[i_src2, j_src2, k_src2]
 
-                # Scan backward
-                ci, cj, ck = i - di, j - dj, k - dk
-                for _ in range(max_scan):
-                    if ci < 0 or ci >= nx or cj < 0 or cj >= ny or ck < 0 or ck >= nz:
-                        break
-                    if protein_mask[ci, cj, ck]:
-                        psp[i, j, k] = 1
-                        break
-                    ci -= di
-                    cj -= dj
-                    ck -= dk
-
-    return psp
+    return (fwd & bwd & ~protein_mask).astype(np.int32)
 
 
 def assign_pocket_to_residues(
