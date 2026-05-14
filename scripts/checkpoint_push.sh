@@ -25,8 +25,9 @@ while true; do
 
     # Stage noisy frames (the bulk of the data)
     git add data/noisy_frames/ -A 2>/dev/null || true
-    # Stage metadata + logs
+    # Stage metadata, logs, progress
     git add data/md_frames/ data/md_labels/ data/protein_lists/ -A 2>/dev/null || true
+    git add data/noisy_frames/progress.log 2>/dev/null || true
     git add OPERATIONAL_LOG.md 2>/dev/null || true
 
     # Only commit if there are staged changes

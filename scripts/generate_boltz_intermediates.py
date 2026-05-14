@@ -36,7 +36,9 @@ import json
 import os
 import subprocess
 import sys
+import threading
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 import click
@@ -359,9 +361,11 @@ def _run_capture(
               help="Number of GPUs to use. Splits protein list into N chunks, "
                    "each pinned to one GPU via CUDA_VISIBLE_DEVICES. "
                    "Use 1 for single-GPU or CPU runs.")
+@click.option("--worker_id", type=int, default=0, hidden=True,
+              help="Internal: GPU worker index for progress tracking (set by parent).")
 def main(
     frames_dir, labels_dir, out_dir, proteins, n_frames,
-    timesteps, sampling_steps, accelerator, num_gpus,
+    timesteps, sampling_steps, accelerator, num_gpus, worker_id,
 ):
     frames_path = Path(frames_dir)
     labels_path = Path(labels_dir)
@@ -382,7 +386,13 @@ def main(
     # Multi-GPU: spawn N subprocesses each pinned to one GPU
     if num_gpus > 1 and accelerator == "gpu":
         chunks = [protein_ids[i::num_gpus] for i in range(num_gpus)]
+        logs_dir = out_path / "logs"
+        logs_dir.mkdir(parents=True, exist_ok=True)
+        progress_dir = out_path / ".progress"
+        progress_dir.mkdir(parents=True, exist_ok=True)
+
         procs = []
+        log_fds = []
         for gpu_idx, chunk in enumerate(chunks):
             if not chunk:
                 continue
@@ -398,19 +408,76 @@ def main(
                 "--timesteps", timesteps,
                 "--sampling_steps", str(sampling_steps),
                 "--accelerator", "gpu",
-                "--num_gpus", "1",  # prevent recursive fan-out
+                "--num_gpus", "1",
+                "--worker_id", str(gpu_idx),
             ]
-            click.echo(f"GPU {gpu_idx}: {len(chunk)} proteins — {chunk[:3]}{'...' if len(chunk)>3 else ''}")
-            proc = subprocess.Popen(cmd, env=env)
+            log_path = logs_dir / f"gpu{gpu_idx}.log"
+            log_fd = open(log_path, "w", buffering=1)
+            log_fds.append(log_fd)
+            click.echo(f"GPU {gpu_idx}: {len(chunk)} proteins → {log_path}")
+            click.echo(f"  proteins: {chunk[:3]}{'...' if len(chunk) > 3 else ''}")
+            proc = subprocess.Popen(cmd, env=env, stdout=log_fd, stderr=subprocess.STDOUT)
             procs.append((gpu_idx, proc))
 
-        click.echo(f"Launched {len(procs)} GPU workers. Waiting for completion...")
+        total_target = len(protein_ids) * n_frames
+        run_start = time.time()
+        cost_per_gpu_hr = 0.40  # A40 community $/hr
+        monitor_interval = 600  # 10 min
+
+        click.echo(f"\nLaunched {len(procs)} GPU workers.")
+        click.echo(f"Target: {total_target} frames ({len(protein_ids)} proteins × {n_frames} frames)")
+        click.echo(f"Live logs: tail -f {logs_dir}/gpu*.log")
+        click.echo(f"Progress updates every {monitor_interval // 60} min below.\n")
+
+        def _monitor():
+            while any(p.poll() is None for _, p in procs):
+                time.sleep(monitor_interval)
+                elapsed = time.time() - run_start
+                total_done = 0
+                for i in range(len(procs)):
+                    pf = progress_dir / f"gpu{i}.json"
+                    if pf.exists():
+                        try:
+                            d = json.loads(pf.read_text())
+                            total_done += d.get("frames_done", 0)
+                        except Exception:
+                            pass
+                remaining = max(0, total_target - total_done)
+                rate = total_done / elapsed if elapsed > 0 else 0
+                eta_s = remaining / rate if rate > 0 else float("inf")
+                gpu_hrs_elapsed = (elapsed / 3600) * len(procs)
+                gpu_hrs_total = (total_target / max(rate, 1e-9) / 3600) * len(procs)
+                cost_so_far = gpu_hrs_elapsed * cost_per_gpu_hr
+                cost_total_est = gpu_hrs_total * cost_per_gpu_hr
+                pct = 100 * total_done / total_target if total_target > 0 else 0
+                lines = [
+                    f"=== {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')} ===",
+                    f"Elapsed:      {elapsed/3600:.2f}h",
+                    f"Frames done:  {total_done} / {total_target} ({pct:.1f}%)",
+                    f"Remaining:    {remaining}",
+                    f"Rate:         {rate*3600:.0f} frames/hr",
+                    f"ETA:          {eta_s/3600:.1f}h",
+                    f"Cost so far:  ${cost_so_far:.2f}",
+                    f"Est. total:   ${cost_total_est:.2f}  (target $46)",
+                    "",
+                ]
+                summary = "\n".join(lines)
+                print(summary, flush=True)
+                plog = out_path / "progress.log"
+                with open(plog, "a") as f:
+                    f.write(summary)
+
+        monitor_thread = threading.Thread(target=_monitor, daemon=True)
+        monitor_thread.start()
+
         failed = []
         for gpu_idx, proc in procs:
             proc.wait()
             if proc.returncode != 0:
                 click.echo(f"  GPU {gpu_idx} worker exited with code {proc.returncode}")
                 failed.append(gpu_idx)
+        for fd in log_fds:
+            fd.close()
         if failed:
             click.echo(f"WARNING: {len(failed)} GPU worker(s) failed: {failed}")
             sys.exit(1)
@@ -428,6 +495,10 @@ def main(
 
     total_written = 0
     total_skipped = 0
+    frames_done_this_worker = 0
+    worker_start = time.time()
+    progress_dir = out_path / ".progress"
+    progress_dir.mkdir(parents=True, exist_ok=True)
 
     for p_idx, protein_id in enumerate(protein_ids):
         protein_frame_dir = frames_path / protein_id
@@ -504,7 +575,21 @@ def main(
                 )
                 elapsed = time.time() - t0
                 total_written += len(written)
+                frames_done_this_worker += 1
                 click.echo(f"  Frame {frame_idx:04d}: {len(written)} files in {elapsed:.1f}s")
+
+                # Write per-worker progress for parent monitor
+                try:
+                    pf = progress_dir / f"gpu{worker_id}.json"
+                    pf.write_text(json.dumps({
+                        "worker_id": worker_id,
+                        "frames_done": frames_done_this_worker,
+                        "start_time": worker_start,
+                        "last_update": time.time(),
+                        "current_protein": protein_id,
+                    }))
+                except Exception:
+                    pass
 
             except Exception as e:
                 click.echo(f"  Frame {frame_idx:04d}: FAILED — {e}")
