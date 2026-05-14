@@ -274,3 +274,7 @@ def main(protein_list, raw_dir, frames_dir, n_frames, skip_ns, temperature):
     click.echo(f"\n=== Done ===")
     click.echo(f"Processed: {done}, Skipped: {skipped}, Failed: {failed}")
     click.echo(f"Frames saved to: {frames_path}")
+
+
+if __name__ == "__main__":
+    main()
