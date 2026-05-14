@@ -1,0 +1,10 @@
+{
+  "protein_id": "2kzvA01",
+  "source": "mdcath",
+  "total_frames": 500,
+  "n_extracted": 100,
+  "n_residues": 73,
+  "n_atoms": 1151,
+  "sequence": "DMFTSAIEAVARDSGWAELSAVGSYLAKNDPSFDPRNWGXGRLSQMVKKLDFLTVQESRNGSKLXSEIRLRXD",
+  "temperature_K": 320
+}

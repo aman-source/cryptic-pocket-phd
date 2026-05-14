@@ -1,0 +1,10 @@
+{
+  "protein_id": "2mmbA00",
+  "source": "mdcath",
+  "total_frames": 500,
+  "n_extracted": 100,
+  "n_residues": 107,
+  "n_atoms": 1718,
+  "sequence": "GTDFGTTNNFVSPNLQLKQNVLPPTPKNIPLPAFGQRIIGWGTGAEGARQRLENIQPADVSMIKKQGTTLEMITAWQDFYEQEQQRNENNPTAKYRARLMKKIADLW",
+  "temperature_K": 320
+}

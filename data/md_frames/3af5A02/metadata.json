@@ -1,0 +1,10 @@
+{
+  "protein_id": "3af5A02",
+  "source": "mdcath",
+  "total_frames": 500,
+  "n_extracted": 100,
+  "n_residues": 71,
+  "n_atoms": 1156,
+  "sequence": "DPEVLLPPEEAEKLIFEIVPKEAEITNIAFDPSVGEVLIEAKKPGLVIGKNGETLRLITQKVKWAPKVVRT",
+  "temperature_K": 320
+}

@@ -1,0 +1,10 @@
+{
+  "protein_id": "1tvsA00",
+  "source": "mdcath",
+  "total_frames": 450,
+  "n_extracted": 100,
+  "n_residues": 75,
+  "n_atoms": 1202,
+  "sequence": "LEDRRIPGTAEENLQKSSGGVPGQNTGGQEARPNYXCQLCFLRSLGIDYLDASLRKKNKQRLKAIQQGRQPQYLL",
+  "temperature_K": 320
+}

@@ -1,0 +1,10 @@
+{
+  "protein_id": "4k12A00",
+  "source": "mdcath",
+  "total_frames": 500,
+  "n_extracted": 100,
+  "n_residues": 64,
+  "n_atoms": 969,
+  "sequence": "GSXMSCDIPVFMNARTKNDFTWFKLNDTLDYECXDGYESNTGSTTGSIVCGYNGWSDLPICYER",
+  "temperature_K": 320
+}

@@ -1,0 +1,10 @@
+{
+  "protein_id": "3gqcC04",
+  "source": "mdcath",
+  "total_frames": 500,
+  "n_extracted": 100,
+  "n_residues": 120,
+  "n_atoms": 1908,
+  "sequence": "ERKSVSAEINYGIRFTQPKEAEAFLLSLSEEIQRRLEATGMKGKRLTLKIMVRKPGAPVETAKFGGXGICDNIARTVTLDQATDNAKIIGKAMLNMFXTMKLNISDMRGVGIXVNQLVPT",
+  "temperature_K": 320
+}

@@ -1,0 +1,10 @@
+{
+  "protein_id": "3hshE00",
+  "source": "mdcath",
+  "total_frames": 500,
+  "n_extracted": 100,
+  "n_residues": 55,
+  "n_atoms": 898,
+  "sequence": "GSSGVRLWATRQAMLGQVXEVPEGWLIFVAEQEELYVRVQNGFRKVQLEARTPLP",
+  "temperature_K": 320
+}

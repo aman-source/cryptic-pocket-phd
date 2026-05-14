@@ -1,0 +1,10 @@
+{
+  "protein_id": "2cp6A01",
+  "source": "mdcath",
+  "total_frames": 500,
+  "n_extracted": 100,
+  "n_residues": 80,
+  "n_atoms": 1249,
+  "sequence": "IKKGERELKIGDRVLVGGTKAGVVRFLGETDFAKGEWCGVELDEPLGKNDGAVAGTRYFQCQPKYGLFAPVXKVTKIGFP",
+  "temperature_K": 320
+}

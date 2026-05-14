@@ -1,0 +1,10 @@
+{
+  "protein_id": "1gotG00",
+  "source": "mdcath",
+  "total_frames": 440,
+  "n_extracted": 100,
+  "n_residues": 58,
+  "n_atoms": 974,
+  "sequence": "LTEKDKLKMEVDQLKKEVTLERMLVSKCCEEFRDYVEERSGEDPLVKGIPEDKNPFKE",
+  "temperature_K": 320
+}

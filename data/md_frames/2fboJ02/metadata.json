@@ -1,0 +1,10 @@
+{
+  "protein_id": "2fboJ02",
+  "source": "mdcath",
+  "total_frames": 500,
+  "n_extracted": 100,
+  "n_residues": 113,
+  "n_atoms": 1687,
+  "sequence": "VXVSTAEVVQVDEGNDITMTCPCTDCANANVTWYTGPTFFENYETGTYQPLANKNQFGITWFSSEIAGRASFSGARNLVIRAAKITDAGRVWCELATGQGELDADRSSTILKV",
+  "temperature_K": 320
+}
