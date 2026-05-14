@@ -293,10 +293,25 @@ def main(metadata: str, out_dir: str, n: int, homologs_file: str | None, seed: i
             })
         click.echo(f"  Class {cls} ({CATH_CLASSES[cls]}), bin {LENGTH_BIN_LABELS[bin_idx]}: {n_pick} selected")
 
-    # Flatten in cell order (for balanced interleaving)
+    # Backfill to target N if short (caused by sparse cells, e.g. Class 4)
     all_selected_ordered: list[str] = []
     for cls, bin_idx in cell_order:
         all_selected_ordered.extend(selected_cells.get((cls, bin_idx), []))
+
+    if len(all_selected_ordered) < n:
+        shortfall = n - len(all_selected_ordered)
+        selected_set = set(all_selected_ordered)
+        # Collect overflow from non-empty cells, sorted by class+bin for balance
+        overflow: list[dict] = []
+        for cls, bin_idx in cell_order:
+            for d in cells.get((cls, bin_idx), []):
+                if d["domain_id"] not in selected_set:
+                    overflow.append(d)
+        if overflow:
+            idx = rng.choice(len(overflow), size=min(shortfall, len(overflow)), replace=False)
+            extras = [overflow[j]["domain_id"] for j in sorted(idx)]
+            all_selected_ordered.extend(extras)
+            click.echo(f"  Backfilled {len(extras)} proteins to reach target {n}")
 
     click.echo(f"\nTotal selected: {len(all_selected_ordered)}")
 
