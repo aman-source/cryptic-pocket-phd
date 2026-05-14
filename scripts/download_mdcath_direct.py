@@ -5,21 +5,22 @@ Download mdCATH H5 files directly from HuggingFace Hub.
 Bypasses the datasets streaming API (which has an h5py scalar bug) by
 using hf_hub_download per-file. Idempotent: skips already-downloaded files.
 
-Selects proteins stratified by sequence length using n_residues from H5 filenames
-(length is inferred after downloading a small sample if needed).
+Two modes:
+  --protein_list FILE  : Download specific domain IDs listed in FILE (one per line).
+                         Use output from select_stratified_proteins.py (pod*_gpu*.txt).
+  --n N --offset M     : Download N proteins starting at offset M in sorted HF list.
 
 Usage:
-    # Download first 60 proteins from HF list (sorted, take slice)
+    # Specific domain IDs (recommended after select_stratified_proteins.py)
     python scripts/download_mdcath_direct.py \
         --out_dir data/md_raw/mdcath \
-        --n 60 \
-        --offset 0     # Pod 1: proteins 0-59
+        --protein_list data/protein_lists/pod1_gpu0.txt \
+        --workers 8
 
-    # Pod 2: proteins 60-119
+    # Legacy slice-based
     python scripts/download_mdcath_direct.py \
         --out_dir data/md_raw/mdcath \
-        --n 60 \
-        --offset 60
+        --n 60 --offset 0
 """
 import sys
 import time
@@ -31,13 +32,15 @@ import click
 @click.command()
 @click.option("--out_dir", type=click.Path(), required=True,
               help="Output directory for H5 files")
+@click.option("--protein_list", type=click.Path(), default=None,
+              help="File with one domain_id per line (from select_stratified_proteins.py)")
 @click.option("--n", type=int, default=60,
-              help="Number of proteins to download")
+              help="[Legacy] Number of proteins to download from sorted HF list")
 @click.option("--offset", type=int, default=0,
-              help="Start index into the sorted HF file list (for pod splitting)")
-@click.option("--workers", type=int, default=4,
+              help="[Legacy] Start index into sorted HF list")
+@click.option("--workers", type=int, default=8,
               help="Parallel download workers")
-def main(out_dir, n, offset, workers):
+def main(out_dir, protein_list, n, offset, workers):
     from huggingface_hub import hf_hub_download, list_repo_files
     import concurrent.futures
 
@@ -52,12 +55,41 @@ def main(out_dir, n, offset, workers):
     ])
     click.echo(f"Total H5 files: {len(all_files)}")
 
-    # Select our slice
-    selected = all_files[offset: offset + n]
-    if not selected:
-        click.echo(f"ERROR: offset={offset} exceeds available files ({len(all_files)})")
-        sys.exit(1)
-    click.echo(f"Selected files [{offset}:{offset+n}]: {len(selected)} files")
+    # Build domain_id → hf_path lookup
+    hf_path_map = {}
+    for hf_file in all_files:
+        domain_id = Path(hf_file).stem.replace("mdcath_dataset_", "")
+        hf_path_map[domain_id] = hf_file
+
+    if protein_list:
+        # Mode 1: specific domain IDs from stratified selection
+        list_path = Path(protein_list)
+        if not list_path.exists():
+            click.echo(f"ERROR: --protein_list not found: {list_path}")
+            sys.exit(1)
+        domain_ids = [l.strip() for l in list_path.read_text().splitlines() if l.strip()]
+        click.echo(f"Requested {len(domain_ids)} proteins from {list_path.name}")
+
+        selected = []
+        missing = []
+        for domain_id in domain_ids:
+            if domain_id in hf_path_map:
+                selected.append(hf_path_map[domain_id])
+            else:
+                missing.append(domain_id)
+
+        if missing:
+            click.echo(f"WARNING: {len(missing)} domain IDs not found in HF repo:")
+            for m in missing[:10]:
+                click.echo(f"  {m}")
+        click.echo(f"Found {len(selected)}/{len(domain_ids)} in HF repo")
+    else:
+        # Mode 2: legacy slice
+        selected = all_files[offset: offset + n]
+        if not selected:
+            click.echo(f"ERROR: offset={offset} exceeds available files ({len(all_files)})")
+            sys.exit(1)
+        click.echo(f"Selected files [{offset}:{offset+n}]: {len(selected)} files")
 
     def download_one(hf_path: str) -> tuple[str, str]:
         """Download one H5 file. Returns (domain_id, local_path)."""
