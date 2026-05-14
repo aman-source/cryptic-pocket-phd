@@ -5,13 +5,13 @@
 # Usage (on pod):
 #   bash scripts/checkpoint_push.sh
 #
-# Pushes every 20 min. Ctrl-C to stop.
+# Pushes every 5 min. Ctrl-C to stop.
 # Requires: git remote already configured with PAT token in URL.
 
 set -euo pipefail
 
 REPO=/workspace/cryptic-pocket-phd
-INTERVAL=1200  # 20 min
+INTERVAL=300   # 5 min
 
 echo "[checkpoint] Starting push loop. Interval: ${INTERVAL}s"
 echo "[checkpoint] Repo: ${REPO}"

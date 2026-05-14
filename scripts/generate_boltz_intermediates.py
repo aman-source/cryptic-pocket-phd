@@ -34,6 +34,7 @@ GPU run (Task A1 full):
 """
 import json
 import os
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -354,9 +355,13 @@ def _run_capture(
 @click.option("--sampling_steps", type=int, default=200,
               help="Boltz denoising steps (use 10 for local CPU test)")
 @click.option("--accelerator", type=click.Choice(["cpu", "gpu"]), default="cpu")
+@click.option("--num_gpus", type=int, default=1,
+              help="Number of GPUs to use. Splits protein list into N chunks, "
+                   "each pinned to one GPU via CUDA_VISIBLE_DEVICES. "
+                   "Use 1 for single-GPU or CPU runs.")
 def main(
     frames_dir, labels_dir, out_dir, proteins, n_frames,
-    timesteps, sampling_steps, accelerator,
+    timesteps, sampling_steps, accelerator, num_gpus,
 ):
     frames_path = Path(frames_dir)
     labels_path = Path(labels_dir)
@@ -373,6 +378,44 @@ def main(
             d.name for d in frames_path.iterdir()
             if d.is_dir() and (d / "metadata.json").exists()
         ])
+
+    # Multi-GPU: spawn N subprocesses each pinned to one GPU
+    if num_gpus > 1 and accelerator == "gpu":
+        chunks = [protein_ids[i::num_gpus] for i in range(num_gpus)]
+        procs = []
+        for gpu_idx, chunk in enumerate(chunks):
+            if not chunk:
+                continue
+            env = os.environ.copy()
+            env["CUDA_VISIBLE_DEVICES"] = str(gpu_idx)
+            cmd = [
+                sys.executable, __file__,
+                "--frames_dir", frames_dir,
+                "--labels_dir", labels_dir,
+                "--out_dir", out_dir,
+                "--proteins", ",".join(chunk),
+                "--n_frames", str(n_frames),
+                "--timesteps", timesteps,
+                "--sampling_steps", str(sampling_steps),
+                "--accelerator", "gpu",
+                "--num_gpus", "1",  # prevent recursive fan-out
+            ]
+            click.echo(f"GPU {gpu_idx}: {len(chunk)} proteins — {chunk[:3]}{'...' if len(chunk)>3 else ''}")
+            proc = subprocess.Popen(cmd, env=env)
+            procs.append((gpu_idx, proc))
+
+        click.echo(f"Launched {len(procs)} GPU workers. Waiting for completion...")
+        failed = []
+        for gpu_idx, proc in procs:
+            proc.wait()
+            if proc.returncode != 0:
+                click.echo(f"  GPU {gpu_idx} worker exited with code {proc.returncode}")
+                failed.append(gpu_idx)
+        if failed:
+            click.echo(f"WARNING: {len(failed)} GPU worker(s) failed: {failed}")
+            sys.exit(1)
+        click.echo("All GPU workers finished.")
+        return
 
     click.echo(f"Proteins: {len(protein_ids)}")
     click.echo(f"Target timesteps: {target_ts}")
