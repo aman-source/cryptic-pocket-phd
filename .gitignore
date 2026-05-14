@@ -28,6 +28,10 @@ external/conformix/
 *.pth
 *.npz
 *.h5
+# LFS-tracked npz dirs — override *.npz ignore above
+!data/md_frames/**/*.npz
+!data/md_labels/**/*.npz
+!data/noisy_frames/**/*.npz
 
 # Results (committed selectively)
 results/phase0/per_protein/*.csv.tmp
