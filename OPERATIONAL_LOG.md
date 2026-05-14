@@ -10,6 +10,8 @@ Per CLAUDE.md Rule 4: every pod session tracked.
 | defiant_orange_barnacle (f31f19cghtwogs) | 2026-05-12 | 2026-05-13 | ~3.5h | ~$3.12 | Task F sweep v2 (2×A40) | 55/55 configs complete. Coverage metric later found broken (alignment). |
 | cc1f64276c26 | 2026-05-13 | 2026-05-13 | ~0.7h | ~$0.28 | Unguided baseline (5 proteins) | 5/5 complete. Proved guidance ≤ baseline after alignment fix. |
 
+| A40 timing pod (194.68.245.124:22023) | 2026-05-14 | 2026-05-14 | ~0.3h | ~$0.12 | Task A1 timing: 1k5n_A, 5 frames, 200 steps, 5 timesteps | 20.5s/frame. 25 npz written. Extrapolate: 200p×200f×20.5s ≈ 228 GPU-hrs ≈ ~$90 on A40. |
+
 ## Phase 1 Total
 
 | Item | Cost |

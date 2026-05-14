@@ -431,6 +431,7 @@ def main(
             )
             if all_exist:
                 total_skipped += len(target_ts)
+                click.echo(f"  Frame {frame_idx:04d}: already exists, skipping")
                 continue
 
             # Load frame + labels
