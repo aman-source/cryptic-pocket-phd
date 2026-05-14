@@ -1,0 +1,2 @@
+data/md_frames/**/*.npz filter=lfs diff=lfs merge=lfs -text
+data/md_labels/**/*.npz filter=lfs diff=lfs merge=lfs -text
