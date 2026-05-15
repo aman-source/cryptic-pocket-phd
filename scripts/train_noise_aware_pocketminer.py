@@ -33,6 +33,7 @@ import torch.nn as nn
 import yaml
 from scipy.stats import spearmanr
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 REPO_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
@@ -187,7 +188,7 @@ class Trainer:
         self.model.eval()
         all_results = []
 
-        for batch in val_loader:
+        for batch in tqdm(val_loader, desc="Validating", leave=False):
             coords = batch["coords"].to(self.device)
             seq = batch["seq"].to(self.device)
             t = batch["t"].to(self.device)
@@ -418,37 +419,30 @@ def run_full_training(cfg: dict):
 
         # --- Training epoch ---
         trainer.model.train()
-        for step_in_epoch, batch in enumerate(train_loader):
-            t0 = time.time()
+        pbar = tqdm(
+            train_loader, desc=f"Epoch {epoch:02d}",
+            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}] loss={postfix[loss]:.4f} gnorm={postfix[gnorm]:.3f} lr={postfix[lr]:.1e}",
+            postfix={"loss": 0.0, "gnorm": 0.0, "lr": 0.0},
+        )
+        for step_in_epoch, batch in enumerate(pbar):
             loss, grad_norm = trainer.train_step(batch)
-            dt = time.time() - t0
             epoch_losses.append(loss)
 
             # NaN check
             if np.isnan(loss):
-                print(f"NaN loss at epoch {epoch} step {step_in_epoch}! ABORTING.", flush=True)
+                print(f"\nNaN loss at epoch {epoch} step {step_in_epoch}! ABORTING.", flush=True)
                 sys.exit(1)
 
-            # Per-step W&B logging
+            # Update progress bar
             lr = trainer.optimizer.param_groups[0]["lr"]
+            pbar.set_postfix(loss=loss, gnorm=grad_norm, lr=lr)
+
+            # Per-step W&B logging
             trainer.log_wandb({
                 "train/loss": loss,
                 "train/grad_norm": grad_norm,
                 "train/lr": lr,
             }, step=trainer.global_step)
-
-            # Stdout every 100 steps
-            if step_in_epoch % 100 == 0:
-                elapsed = time.time() - trainer.train_start_time
-                steps_done = trainer.global_step
-                steps_total = max_epochs * steps_per_epoch
-                eta_total = (elapsed / max(steps_done, 1)) * steps_total
-                print(
-                    f"  E{epoch:02d} S{step_in_epoch:04d}/{steps_per_epoch}: "
-                    f"loss={loss:.4f} gnorm={grad_norm:.3f} lr={lr:.2e} "
-                    f"dt={dt:.2f}s elapsed={elapsed/60:.0f}min",
-                    flush=True,
-                )
 
             # Hour-1 projection
             elapsed_hrs = (time.time() - trainer.train_start_time) / 3600
@@ -457,8 +451,8 @@ def run_full_training(cfg: dict):
                 total_steps = max_epochs * steps_per_epoch
                 projected_hrs = total_steps / rate
                 cost_per_hr = 1.14
-                print(f"\n>>> HOUR 1 PROJECTION: {projected_hrs:.1f}h total, "
-                      f"${projected_hrs * cost_per_hr:.2f} estimated cost <<<\n", flush=True)
+                tqdm.write(f"\n>>> HOUR 1 PROJECTION: {projected_hrs:.1f}h total, "
+                           f"${projected_hrs * cost_per_hr:.2f} estimated cost <<<\n")
                 hour1_printed = True
 
             # Hour-4 projection
@@ -467,8 +461,8 @@ def run_full_training(cfg: dict):
                 total_steps = max_epochs * steps_per_epoch
                 projected_hrs = total_steps / rate
                 cost_per_hr = 1.14
-                print(f"\n>>> HOUR 4 PROJECTION: {projected_hrs:.1f}h total, "
-                      f"${projected_hrs * cost_per_hr:.2f} estimated cost <<<\n", flush=True)
+                tqdm.write(f"\n>>> HOUR 4 PROJECTION: {projected_hrs:.1f}h total, "
+                           f"${projected_hrs * cost_per_hr:.2f} estimated cost <<<\n")
                 hour4_printed = True
 
             # Git commit every 30 min
