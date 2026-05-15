@@ -1,0 +1,44 @@
+# Task A3: Noise-aware PocketMiner training config
+
+data:
+  hf_repo: "aman-gpt/cryptic-pocket-task-a1"
+  split_file: "configs/task_a3_split.json"
+  n_frames: 100
+  timesteps: [0.1, 0.3, 0.5, 0.7, 0.9]
+  cache_dir: "/tmp/hf_cache"
+
+model:
+  t_dim: 32
+  source_dim: 3
+  node_features: [8, 50]
+  edge_features: [1, 32]
+  hidden_dim: [16, 100]
+  num_layers: 4
+  k_neighbors: 30
+  dropout: 0.1
+  base_weights: "models/pocketminer_torch.pt"
+
+training:
+  batch_size: 16
+  max_epochs: 50
+  lr: 1.0e-4
+  weight_decay: 0.01
+  warmup_epochs: 1
+  early_stop_patience: 5
+  early_stop_metric: "val_rho_t05"
+  early_stop_mode: "max"
+  gradient_clip_val: 1.0
+  num_workers: 4
+  seed: 42
+
+checkpointing:
+  monitor: "val_rho_t05"
+  mode: "max"
+  save_top_k: 3
+  save_last: true
+  dirpath: "checkpoints/task_a3"
+
+wandb:
+  project: "cryptic-pocket-phd"
+  group: "task_a3"
+  name: "noise-aware-pocketminer"
