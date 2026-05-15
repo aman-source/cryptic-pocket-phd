@@ -38,7 +38,7 @@ from tqdm import tqdm
 REPO_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from cryptic_pocket_phd.datasets import NoisyPocketDataset, collate_variable_length
+from cryptic_pocket_phd.datasets import NoisyPocketDataset, collate_variable_length, snapshot_download_dataset
 from cryptic_pocket_phd.pocketminer_noise_aware import NoiseAwarePocketMiner
 
 
@@ -358,21 +358,25 @@ def run_full_training(cfg: dict):
 
     hf_token = cfg["data"].get("hf_token")
 
+    # Pre-download dataset to local disk
+    local_data_dir = cfg["data"].get("local_data_dir", "/workspace/data/cryptic-pocket-task-a1")
+    local_data_dir = snapshot_download_dataset(
+        hf_repo=cfg["data"]["hf_repo"],
+        local_dir=local_data_dir,
+        hf_token=hf_token,
+    )
+
     # Datasets
     print("Loading datasets...", flush=True)
     train_ds = NoisyPocketDataset(
         protein_list=split["train"],
-        hf_repo=cfg["data"]["hf_repo"],
-        cache_dir=cfg["data"]["cache_dir"],
-        hf_token=hf_token,
+        local_data_dir=local_data_dir,
         n_frames=cfg["data"]["n_frames"],
         timesteps=cfg["data"]["timesteps"],
     )
     val_ds = NoisyPocketDataset(
         protein_list=split["val"],
-        hf_repo=cfg["data"]["hf_repo"],
-        cache_dir=cfg["data"]["cache_dir"],
-        hf_token=hf_token,
+        local_data_dir=local_data_dir,
         n_frames=cfg["data"]["n_frames"],
         timesteps=cfg["data"]["timesteps"],
     )
