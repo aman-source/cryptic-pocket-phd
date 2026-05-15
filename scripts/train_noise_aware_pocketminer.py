@@ -419,11 +419,7 @@ def run_full_training(cfg: dict):
 
         # --- Training epoch ---
         trainer.model.train()
-        pbar = tqdm(
-            train_loader, desc=f"Epoch {epoch:02d}",
-            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}] loss={postfix[loss]:.4f} gnorm={postfix[gnorm]:.3f} lr={postfix[lr]:.1e}",
-            postfix={"loss": 0.0, "gnorm": 0.0, "lr": 0.0},
-        )
+        pbar = tqdm(train_loader, desc=f"Epoch {epoch:02d}")
         for step_in_epoch, batch in enumerate(pbar):
             loss, grad_norm = trainer.train_step(batch)
             epoch_losses.append(loss)
